@@ -50,7 +50,7 @@ public class UserRepository {
 
     public void deleteUser(Long userId) {
         for (int id = 1; id <= ALL_USERS.size(); id++) {
-            User currentUser = ALL_USERS.get(id-1);
+            User currentUser = ALL_USERS.get(id - 1);
             if (userId == currentUser.getId()) {
                 ALL_USERS.remove(currentUser);
             }
@@ -59,14 +59,14 @@ public class UserRepository {
 
     public User findUserById(Long userId) {
         for (int id = 1; id <= ALL_USERS.size(); id++) {
-            if (userId == ALL_USERS.get(id-1).getId()) {
-                return ALL_USERS.get(id-1);
+            if (userId == ALL_USERS.get(id - 1).getId()) {
+                return ALL_USERS.get(id - 1);
             }
         }
         throw new NotFoundException("User is not found");
     }
 
-    public boolean checkIsEmailUnique (User user) {
+    public boolean checkIsEmailUnique(User user) {
         for (int id = 1; id <= ALL_USERS.size(); id++) {
             if (Objects.equals(user.getEmail(), ALL_USERS.get(id - 1).getEmail())) {
                 return false;

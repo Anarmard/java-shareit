@@ -40,7 +40,7 @@ public class ItemRepository {
 
     public Item findByItemId(long itemId) {
         for (int id = 1; id <= ALL_ITEMS.size(); id++) {
-            Item currentItem = ALL_ITEMS.get(id-1);
+            Item currentItem = ALL_ITEMS.get(id - 1);
             if (itemId == currentItem.getId()) {
                 return currentItem;
             }
@@ -51,9 +51,9 @@ public class ItemRepository {
     public List<Item> findAllItemsByUserId(long userId) {
         List<Item> allUserItems = new ArrayList<>();
         for (int id = 1; id <= ALL_ITEMS.size(); id++) {
-            Item currentItem = ALL_ITEMS.get(id-1);
+            Item currentItem = ALL_ITEMS.get(id - 1);
             if (userId == currentItem.getOwner().getId()) {
-                 allUserItems.add(currentItem);
+                allUserItems.add(currentItem);
             }
         }
         return allUserItems;
@@ -62,9 +62,9 @@ public class ItemRepository {
     public List<Item> findAllItemsThroughSearch(String text) {
         List<Item> allItemsWithText = new ArrayList<>();
         for (int id = 1; id <= ALL_ITEMS.size(); id++) {
-            Item currentItem = ALL_ITEMS.get(id-1);
+            Item currentItem = ALL_ITEMS.get(id - 1);
             if (((currentItem.getName().toLowerCase().contains(text.toLowerCase()))
-                    || (currentItem.getDescription().toLowerCase().contains(text.toLowerCase())) )
+                    || (currentItem.getDescription().toLowerCase().contains(text.toLowerCase())))
                     && (currentItem.getAvailable())) {
                 allItemsWithText.add(currentItem);
             }
@@ -74,7 +74,7 @@ public class ItemRepository {
 
     public void deleteByUserIdAndItemId(long userId, long itemId) {
         for (int id = 1; id <= ALL_ITEMS.size(); id++) {
-            Item currentItem = ALL_ITEMS.get(id-1);
+            Item currentItem = ALL_ITEMS.get(id - 1);
             if (userId == currentItem.getOwner().getId() && itemId == currentItem.getId()) {
                 ALL_ITEMS.remove(currentItem);
             }

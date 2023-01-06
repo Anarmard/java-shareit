@@ -23,7 +23,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item updateItem(Long itemId,  Item item) {
+    public Item updateItem(Long itemId, Item item) {
         validate(itemId, item);
         return itemRepository.update(itemId, item);
     }
@@ -49,7 +49,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void validate(Long itemId, Item item) {
-        if (!itemRepository.checkUserOwnsItem(item.getOwner().getId(),itemId)) {
+        if (!itemRepository.checkUserOwnsItem(item.getOwner().getId(), itemId)) {
             throw new NotFoundException("user is not owner");
         }
     }

@@ -45,7 +45,7 @@ public class UserController extends ErrorHandler {
 
     @PatchMapping("/{userId}")
     public UserResponseDto updateUser(@RequestBody UserUpdateDto userUpdateDto,
-                           @PathVariable Long userId) {
+                                      @PathVariable Long userId) {
         User currentUser = userMapper.toUser(userUpdateDto, userId);
         User returnedUser = userService.updateUser(userId, currentUser);
         return userMapper.toUserDto(returnedUser);

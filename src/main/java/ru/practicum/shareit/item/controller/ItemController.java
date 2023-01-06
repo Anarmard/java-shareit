@@ -37,8 +37,8 @@ public class ItemController extends ErrorHandler {
     // редактирование вещи
     @PatchMapping("/{itemId}")
     public ItemResponse update(@RequestHeader("X-Sharer-User-Id") Long userId,
-                       @PathVariable Long itemId,
-                       @Valid @RequestBody ItemUpdateDto updateItemDto) {
+                               @PathVariable Long itemId,
+                               @Valid @RequestBody ItemUpdateDto updateItemDto) {
         Item currentItem = itemMapper.toItem(updateItemDto, userId);
         Item returnedItem = itemService.updateItem(itemId, currentItem);
         return itemMapper.toItemDto(returnedItem);
@@ -60,7 +60,7 @@ public class ItemController extends ErrorHandler {
 
     // Поиск вещи потенциальным арендатором
     @GetMapping("/search")
-    public List<ItemResponse> getItemsBySearch (@RequestParam("text") String text) {
+    public List<ItemResponse> getItemsBySearch(@RequestParam("text") String text) {
         List<Item> returnedListItem = new ArrayList<>();
         if (!text.isEmpty()) {
             returnedListItem = itemService.getItemsBySearch(text);

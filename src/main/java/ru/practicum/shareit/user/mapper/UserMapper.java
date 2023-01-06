@@ -19,6 +19,7 @@ public interface UserMapper {
     // mapstruct сам генерит необходимый код для преобразования User в UserDto
 
     List<UserResponseDto> toListUserDto(List<User> userList);
+
     User toUser(UserCreateRequestDto userDto);
 
     @Mapping(target = "id", ignore = true)
