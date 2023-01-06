@@ -51,7 +51,7 @@ public class UserRepository {
     public void deleteUser(Long userId) {
         for (int id = 1; id <= ALL_USERS.size(); id++) {
             User currentUser = ALL_USERS.get(id - 1);
-            if (userId == currentUser.getId()) {
+            if (Objects.equals(userId, currentUser.getId())) {
                 ALL_USERS.remove(currentUser);
             }
         }
@@ -59,7 +59,7 @@ public class UserRepository {
 
     public User findUserById(Long userId) {
         for (int id = 1; id <= ALL_USERS.size(); id++) {
-            if (userId == ALL_USERS.get(id - 1).getId()) {
+            if (Objects.equals(userId, ALL_USERS.get(id - 1).getId())) {
                 return ALL_USERS.get(id - 1);
             }
         }
