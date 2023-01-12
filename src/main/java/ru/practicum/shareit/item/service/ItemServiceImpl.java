@@ -16,8 +16,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserService userService;
 
     @Override
-    public Item addNewItem(Long userId, Item item) {
-        userService.getUserById(userId);
+    public Item addNewItem(Item item) {
         item.setOwner(userService.getUserById(item.getOwner().getId()));
         return itemRepository.save(item);
     }

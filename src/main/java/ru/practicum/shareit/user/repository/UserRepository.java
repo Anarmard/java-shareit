@@ -5,17 +5,15 @@ import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Repository
 public class UserRepository {
-    private static final List<User> ALL_USERS = new ArrayList<>();
-    private static long idUser = 0L;
+    private static Long idUser = 0L;
+    private static final Map<Long, User> ID_USER_MAP = new HashMap<>();
 
     public List<User> findAll() {
-        return ALL_USERS;
+        return new ArrayList<>(ID_USER_MAP.values());
     }
 
     public User save(User user) {
@@ -24,7 +22,7 @@ public class UserRepository {
         } else {
             idUser++;
             user.setId(idUser);
-            ALL_USERS.add(user);
+            ID_USER_MAP.put(idUser, user);
             return user;
         }
     }
@@ -34,41 +32,33 @@ public class UserRepository {
             throw new AlreadyExistsException("Email is not unique.");
         }
         User savedUser = findUserById(userId);
-        if (Objects.isNull(savedUser)) {
-            return null;
-        }
-        ALL_USERS.remove(savedUser);
+        ID_USER_MAP.remove(userId);
         if (Objects.nonNull(user.getName())) {
             savedUser.setName(user.getName());
         }
         if (Objects.nonNull(user.getEmail()) && checkIsEmailUnique(user)) {
             savedUser.setEmail(user.getEmail());
         }
-        ALL_USERS.add(savedUser);
+        ID_USER_MAP.put(userId, savedUser);
         return savedUser;
     }
 
     public void deleteUser(Long userId) {
-        for (int id = 1; id <= ALL_USERS.size(); id++) {
-            User currentUser = ALL_USERS.get(id - 1);
-            if (Objects.equals(userId, currentUser.getId())) {
-                ALL_USERS.remove(currentUser);
-            }
-        }
+        ID_USER_MAP.remove(userId);
     }
 
     public User findUserById(Long userId) {
-        for (int id = 1; id <= ALL_USERS.size(); id++) {
-            if (Objects.equals(userId, ALL_USERS.get(id - 1).getId())) {
-                return ALL_USERS.get(id - 1);
-            }
+        if (ID_USER_MAP.containsKey(userId)) {
+            return ID_USER_MAP.get(userId);
+        } else {
+            throw new NotFoundException("User is not found");
         }
-        throw new NotFoundException("User is not found");
     }
 
     public boolean checkIsEmailUnique(User user) {
-        for (int id = 1; id <= ALL_USERS.size(); id++) {
-            if (Objects.equals(user.getEmail(), ALL_USERS.get(id - 1).getEmail())) {
+        for (User u: ID_USER_MAP.values()) {
+            if (Objects.equals(user.getEmail(), u.getEmail()) &&
+                    (!Objects.equals(user.getId(), u.getId()))) {
                 return false;
             }
         }

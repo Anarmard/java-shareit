@@ -7,9 +7,6 @@ import ru.practicum.shareit.user.dto.UserCreateRequestDto;
 
 import javax.validation.Valid;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Valid
 @Getter
 @AllArgsConstructor // конструктор на все параметры

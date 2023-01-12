@@ -1,30 +1,33 @@
 package ru.practicum.shareit.item.repository;
 
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Repository
 public class ItemRepository {
-    private static final List<Item> ALL_ITEMS = new ArrayList<>();
-    private static long idItem = 0L;
+    private static Long idItem = 0L;
+    private static final Map<Long, Item> ID_ITEM_MAP = new HashMap<>();
+    private static final Map<Long, List<Item>> USER_ID_ITEM_LIST_MAP = new HashMap<>();
 
     public Item save(Item item) {
         idItem++;
         item.setId(idItem);
-        ALL_ITEMS.add(item);
+        ID_ITEM_MAP.put(idItem, item);
+
+        List<Item> userItemList = USER_ID_ITEM_LIST_MAP.getOrDefault(item.getOwner().getId(), new ArrayList<>());
+        userItemList.add(item);
+        USER_ID_ITEM_LIST_MAP.put(item.getOwner().getId(), userItemList);
         return item;
     }
 
     public Item update(Long itemId, Item item) {
         Item savedItem = findByItemId(itemId);
-        if (Objects.isNull(savedItem)) {
-            return null;
-        }
-        ALL_ITEMS.remove(findByItemId(itemId));
+        ID_ITEM_MAP.remove(itemId);
+        USER_ID_ITEM_LIST_MAP.get(item.getOwner().getId()).removeIf(n -> Objects.equals(n, item));
+
         if (Objects.nonNull(item.getName())) {
             savedItem.setName(item.getName());
         }
@@ -34,37 +37,34 @@ public class ItemRepository {
         if (Objects.nonNull(item.getAvailable())) {
             savedItem.setAvailable(item.getAvailable());
         }
-        ALL_ITEMS.add(savedItem);
+
+        ID_ITEM_MAP.put(itemId, savedItem);
+
         return savedItem;
     }
 
-    public Item findByItemId(long itemId) {
-        for (int id = 1; id <= ALL_ITEMS.size(); id++) {
-            Item currentItem = ALL_ITEMS.get(id - 1);
-            if (itemId == currentItem.getId()) {
-                return currentItem;
-            }
+    public Item findByItemId(Long itemId) {
+        if (ID_ITEM_MAP.containsKey(itemId)) {
+            return ID_ITEM_MAP.get(itemId);
+        } else {
+            throw new NotFoundException("Item is not found");
         }
-        return null;
     }
 
-    public List<Item> findAllItemsByUserId(long userId) {
-        List<Item> allUserItems = new ArrayList<>();
-        for (int id = 1; id <= ALL_ITEMS.size(); id++) {
-            Item currentItem = ALL_ITEMS.get(id - 1);
-            if (userId == currentItem.getOwner().getId()) {
-                allUserItems.add(currentItem);
-            }
+    public List<Item> findAllItemsByUserId(Long userId) {
+        if (USER_ID_ITEM_LIST_MAP.containsKey(userId)) {
+            return USER_ID_ITEM_LIST_MAP.get(userId);
+        } else {
+            throw new NotFoundException("Owner is not found");
         }
-        return allUserItems;
     }
 
     public List<Item> findAllItemsThroughSearch(String text) {
+        String textLowerCase = text.toLowerCase();
         List<Item> allItemsWithText = new ArrayList<>();
-        for (int id = 1; id <= ALL_ITEMS.size(); id++) {
-            Item currentItem = ALL_ITEMS.get(id - 1);
-            if (((currentItem.getName().toLowerCase().contains(text.toLowerCase()))
-                    || (currentItem.getDescription().toLowerCase().contains(text.toLowerCase())))
+        for (Item currentItem:ID_ITEM_MAP.values()) {
+            if (((currentItem.getName().toLowerCase().contains(textLowerCase))
+                    || (currentItem.getDescription().toLowerCase().contains(textLowerCase)))
                     && (currentItem.getAvailable())) {
                 allItemsWithText.add(currentItem);
             }
@@ -72,17 +72,12 @@ public class ItemRepository {
         return allItemsWithText;
     }
 
-    public void deleteByUserIdAndItemId(long userId, long itemId) {
-        for (int id = 1; id <= ALL_ITEMS.size(); id++) {
-            Item currentItem = ALL_ITEMS.get(id - 1);
-            if (userId == currentItem.getOwner().getId() && itemId == currentItem.getId()) {
-                ALL_ITEMS.remove(currentItem);
-            }
-        }
+    public void deleteByUserIdAndItemId(Long userId, Long itemId) {
+        ID_ITEM_MAP.remove(itemId);
+        USER_ID_ITEM_LIST_MAP.get(userId).removeIf(n -> n.getId().equals(itemId));
     }
 
-    public boolean checkUserOwnsItem(long userId, long itemId) {
-        Item currentItem = findByItemId(itemId);
-        return userId == currentItem.getOwner().getId();
+    public boolean checkUserOwnsItem(Long userId, Long itemId) {
+        return Objects.equals(userId, findByItemId(itemId).getOwner().getId());
     }
 }

@@ -9,13 +9,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Valid
 @Getter
 @AllArgsConstructor // конструктор на все параметры
-public class ItemCreateRequest {
+public class ItemCreateRequestDto {
 
     private Long id;
 
