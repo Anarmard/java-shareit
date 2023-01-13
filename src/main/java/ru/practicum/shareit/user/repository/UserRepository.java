@@ -32,14 +32,14 @@ public class UserRepository {
             throw new AlreadyExistsException("Email is not unique.");
         }
         User savedUser = findUserById(userId);
-        ID_USER_MAP.remove(userId);
+
         if (Objects.nonNull(user.getName())) {
             savedUser.setName(user.getName());
         }
         if (Objects.nonNull(user.getEmail()) && checkIsEmailUnique(user)) {
             savedUser.setEmail(user.getEmail());
         }
-        ID_USER_MAP.put(userId, savedUser);
+
         return savedUser;
     }
 
@@ -48,11 +48,7 @@ public class UserRepository {
     }
 
     public User findUserById(Long userId) {
-        if (ID_USER_MAP.containsKey(userId)) {
-            return ID_USER_MAP.get(userId);
-        } else {
-            throw new NotFoundException("User is not found");
-        }
+        return Optional.ofNullable(ID_USER_MAP.get(userId)).orElseThrow(() -> new NotFoundException("User is not found"));
     }
 
     public boolean checkIsEmailUnique(User user) {

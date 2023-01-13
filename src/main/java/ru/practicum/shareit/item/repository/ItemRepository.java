@@ -25,8 +25,6 @@ public class ItemRepository {
 
     public Item update(Long itemId, Item item) {
         Item savedItem = findByItemId(itemId);
-        ID_ITEM_MAP.remove(itemId);
-        USER_ID_ITEM_LIST_MAP.get(item.getOwner().getId()).removeIf(n -> Objects.equals(n, item));
 
         if (Objects.nonNull(item.getName())) {
             savedItem.setName(item.getName());
@@ -38,25 +36,15 @@ public class ItemRepository {
             savedItem.setAvailable(item.getAvailable());
         }
 
-        ID_ITEM_MAP.put(itemId, savedItem);
-
         return savedItem;
     }
 
     public Item findByItemId(Long itemId) {
-        if (ID_ITEM_MAP.containsKey(itemId)) {
-            return ID_ITEM_MAP.get(itemId);
-        } else {
-            throw new NotFoundException("Item is not found");
-        }
+        return Optional.ofNullable(ID_ITEM_MAP.get(itemId)).orElseThrow(() -> new NotFoundException("Item is not found"));
     }
 
     public List<Item> findAllItemsByUserId(Long userId) {
-        if (USER_ID_ITEM_LIST_MAP.containsKey(userId)) {
-            return USER_ID_ITEM_LIST_MAP.get(userId);
-        } else {
-            throw new NotFoundException("Owner is not found");
-        }
+        return Optional.ofNullable(USER_ID_ITEM_LIST_MAP.get(userId)).orElseThrow(() -> new NotFoundException("Owner is not found"));
     }
 
     public List<Item> findAllItemsThroughSearch(String text) {
