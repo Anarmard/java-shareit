@@ -2,12 +2,13 @@ package ru.practicum.shareit.item.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.ItemCreateRequestDto;
-import ru.practicum.shareit.item.dto.ItemResponseDto;
-import ru.practicum.shareit.item.dto.ItemUpdateDto;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -19,11 +20,14 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
     private final ItemMapper itemMapper;
+    private final CommentMapper commentMapper;
+    private final UserService userService;
 
     // добавление новой вещи
     @PostMapping
     public ItemResponseDto add(@RequestHeader("X-Sharer-User-Id") Long userId,
                                @Valid @RequestBody ItemCreateRequestDto itemCreateRequest) {
+        userService.getUserById(userId);
         Item currentItem = itemMapper.toItem(itemCreateRequest, userId);
         Item returnedItem = itemService.addNewItem(currentItem);
         return itemMapper.toItemDto(returnedItem);
@@ -34,6 +38,7 @@ public class ItemController {
     public ItemResponseDto update(@RequestHeader("X-Sharer-User-Id") Long userId,
                                   @PathVariable Long itemId,
                                   @Valid @RequestBody ItemUpdateDto updateItemDto) {
+        userService.getUserById(userId);
         Item currentItem = itemMapper.toItem(updateItemDto, userId);
         Item returnedItem = itemService.updateItem(itemId, currentItem);
         return itemMapper.toItemDto(returnedItem);
@@ -41,16 +46,15 @@ public class ItemController {
 
     // Просмотр информации о конкретной вещи по её идентификатору
     @GetMapping("/{itemId}")
-    public ItemResponseDto get(@PathVariable Long itemId) {
-        Item returnedItem = itemService.getItem(itemId);
-        return itemMapper.toItemDto(returnedItem);
+    public ItemBookingResponseDto get(@PathVariable Long itemId) {
+        return itemService.getItemBooking(itemId);
     }
 
     // Просмотр владельцем списка всех его вещей с указанием названия и описания для каждой
     @GetMapping
-    public List<ItemResponseDto> getItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        List<Item> returnedListItem = itemService.getItems(userId);
-        return itemMapper.toListItemDto(returnedListItem);
+    public List<ItemBookingResponseDto> getItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        userService.getUserById(userId);
+        return itemService.getItemsBooking(userId);
     }
 
     // Поиск вещи потенциальным арендатором
@@ -66,6 +70,17 @@ public class ItemController {
     @DeleteMapping("/{itemId}")
     public void deleteItem(@RequestHeader("X-Later-User-Id") long userId,
                            @PathVariable Long itemId) {
+        userService.getUserById(userId);
         itemService.deleteItem(userId, itemId);
+    }
+
+    // Добавление отзывов
+    @PostMapping("/{itemId}/comment")
+    public CommentReponseDto addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                        @Valid @RequestBody CommentCreateRequestDto commentCreateRequestDto,
+                                        @PathVariable Long itemId) {
+        userService.getUserById(userId);
+        Comment currentComment = commentMapper.toComment(commentCreateRequestDto, itemId, userId);
+        return itemService.addComment(currentComment);
     }
 }
