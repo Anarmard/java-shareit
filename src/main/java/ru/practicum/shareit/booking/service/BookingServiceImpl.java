@@ -11,7 +11,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.awt.print.Book;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,8 +34,8 @@ public class BookingServiceImpl implements BookingService {
     // Подтверждение или отклонение запроса на бронирование
     @Override
     public Booking approveBooking(Long userId, Long bookingId, Boolean approved) {
-        Booking bookingFromDB = bookingRepository.findById(bookingId).
-                orElseThrow(() -> new NotFoundException("Booking is not found"));
+        Booking bookingFromDB = bookingRepository.findById(bookingId)
+                        .orElseThrow(() -> new NotFoundException("Booking is not found"));
 
         if (Objects.equals(bookingFromDB.getItem().getOwner().getId(), userId)) {
             throw new NotFoundException("user is not owner (approved or reject)");
@@ -54,8 +53,8 @@ public class BookingServiceImpl implements BookingService {
     // Просмотр информации о конкретном бронировании по её идентификатору
     @Override
     public Booking getBooking(Long userId, Long bookingId) {
-        Booking bookingFromDB = bookingRepository.findById(bookingId).
-                orElseThrow(() -> new NotFoundException("Booking is not found"));
+        Booking bookingFromDB = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Booking is not found"));
         if ((Objects.equals(bookingFromDB.getBooker().getId(), userId)) ||
                 (Objects.equals(bookingFromDB.getItem().getOwner().getId(), userId))) {
             throw new NotFoundException("user is not owner or booker");
