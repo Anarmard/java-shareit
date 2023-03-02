@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -46,8 +47,9 @@ public class ItemController {
 
     // Просмотр информации о конкретной вещи по её идентификатору
     @GetMapping("/{itemId}")
-    public ItemBookingResponseDto get(@PathVariable Long itemId) {
-        return itemService.getItemBooking(itemId);
+    public ItemBookingResponseDto get(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                      @PathVariable Long itemId) {
+        return itemService.getItemBooking(itemId, userId);
     }
 
     // Просмотр владельцем списка всех его вещей с указанием названия и описания для каждой
@@ -76,11 +78,15 @@ public class ItemController {
 
     // Добавление отзывов
     @PostMapping("/{itemId}/comment")
-    public CommentReponseDto addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                        @Valid @RequestBody CommentCreateRequestDto commentCreateRequestDto,
-                                        @PathVariable Long itemId) {
-        userService.getUserById(userId);
-        Comment currentComment = commentMapper.toComment(commentCreateRequestDto, itemId, userId);
+    public CommentResponseDto addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                         @Valid @RequestBody CommentCreateRequestDto commentCreateRequestDto,
+                                         @PathVariable Long itemId) {
+        if (commentCreateRequestDto.getText().isEmpty()) {
+            throw new ValidationException("comment is empty");
+        }
+        Comment currentComment = commentMapper.toComment(commentCreateRequestDto);
+        currentComment.setItem(itemService.getItem(itemId));
+        currentComment.setAuthor(userService.getUserById(userId));
         return itemService.addComment(currentComment);
     }
 }

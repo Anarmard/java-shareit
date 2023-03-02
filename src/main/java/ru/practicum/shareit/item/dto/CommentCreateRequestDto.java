@@ -19,10 +19,9 @@ public class CommentCreateRequestDto {
     @NotBlank
     private String text;
 
-    @NotBlank
     private Item item;
 
-    private User author;
+    private User authorName;
 
     private LocalDateTime created;
 }

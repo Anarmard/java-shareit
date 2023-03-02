@@ -32,5 +32,5 @@ public class ItemBookingResponseDto {
 
     private BookingResponseDateDto nextBooking;
 
-    private List<CommentReponseDto> commentList;
+    private List<CommentResponseDto> comments;
 }

@@ -2,8 +2,6 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -11,15 +9,15 @@ import java.time.LocalDateTime;
 @Valid
 @Getter
 @AllArgsConstructor // конструктор на все параметры
-public class CommentReponseDto {
+public class CommentResponseDto {
 
     private Long id;
 
     private String text;
 
-    private Item item;
+    private ItemResponseDto item;
 
-    private User author;
+    private String authorName;
 
     private LocalDateTime created;
 }

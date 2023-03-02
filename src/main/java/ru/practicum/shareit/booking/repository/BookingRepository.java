@@ -8,7 +8,7 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -17,15 +17,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("select b from Booking b " +
             "where b.booker = :booker and :now between b.start and b.end order by b.start desc ")
-    List<Booking> findCurrentByBooker(@Param("booker") User booker, @Param("now") Timestamp now);
+    List<Booking> findCurrentByBooker(@Param("booker") User booker, @Param("now") LocalDateTime now);
 
     @Query("select b from Booking b " +
             "where b.booker = :booker and b.end < :now order by b.start desc ")
-    List<Booking> findPastByBooker(@Param("booker") User booker, @Param("now") Timestamp now);
+    List<Booking> findPastByBooker(@Param("booker") User booker, @Param("now") LocalDateTime now);
 
     @Query("select b from Booking b " +
             "where b.booker = :booker and b.start > :now order by b.start desc ")
-    List<Booking> findFutureByBooker(@Param("booker") User booker, @Param("now") Timestamp now);
+    List<Booking> findFutureByBooker(@Param("booker") User booker, @Param("now") LocalDateTime now);
 
     List<Booking> findAllByBookerAndStatusOrderByStartDesc(
             @Param("booker") User booker,
@@ -37,15 +37,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("select b from Booking b " +
             "where b.item.owner = :owner and :now between b.start and b.end order by b.start desc ")
-    List<Booking> findCurrentByOwnerItems(@Param("owner") User owner, @Param("now") Timestamp now);
+    List<Booking> findCurrentByOwnerItems(@Param("owner") User owner, @Param("now") LocalDateTime now);
 
     @Query("select b from Booking b " +
             "where b.item.owner = :owner and b.end < :now order by b.start desc ")
-    List<Booking> findPastByOwnerItems(@Param("owner") User owner, @Param("now") Timestamp now);
+    List<Booking> findPastByOwnerItems(@Param("owner") User owner, @Param("now") LocalDateTime now);
 
     @Query("select b from Booking b " +
             "where b.item.owner = :owner and b.start > :now order by b.start desc ")
-    List<Booking> findFutureByOwnerItems(@Param("owner") User owner, @Param("now") Timestamp now);
+    List<Booking> findFutureByOwnerItems(@Param("owner") User owner, @Param("now") LocalDateTime now);
 
     @Query("select b from Booking b " +
             "where b.item.owner = :owner and b.status = :status order by b.start desc ")

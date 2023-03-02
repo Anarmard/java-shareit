@@ -7,11 +7,11 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +37,11 @@ public class BookingServiceImpl implements BookingService {
         Booking bookingFromDB = bookingRepository.findById(bookingId)
                         .orElseThrow(() -> new NotFoundException("Booking is not found"));
 
-        if (Objects.equals(bookingFromDB.getItem().getOwner().getId(), userId)) {
+        if ((bookingFromDB.getStatus() == BookingStatus.APPROVED) && (approved)) {
+            throw new ValidationException("booking have already APPROVED");
+        }
+
+        if (!Objects.equals(bookingFromDB.getItem().getOwner().getId(), userId)) {
             throw new NotFoundException("user is not owner (approved or reject)");
         }
 
@@ -46,6 +50,7 @@ public class BookingServiceImpl implements BookingService {
         } else {
             bookingFromDB.setStatus(BookingStatus.REJECTED);
         }
+        bookingRepository.save(bookingFromDB);
 
         return bookingFromDB;
     }
@@ -55,8 +60,8 @@ public class BookingServiceImpl implements BookingService {
     public Booking getBooking(Long userId, Long bookingId) {
         Booking bookingFromDB = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Booking is not found"));
-        if ((Objects.equals(bookingFromDB.getBooker().getId(), userId)) ||
-                (Objects.equals(bookingFromDB.getItem().getOwner().getId(), userId))) {
+        if ((!Objects.equals(bookingFromDB.getBooker().getId(), userId)) &&
+                (!Objects.equals(bookingFromDB.getItem().getOwner().getId(), userId))) {
             throw new NotFoundException("user is not owner or booker");
         }
         return bookingFromDB;
@@ -68,7 +73,7 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> getAllBooking(Long userId, String state) {
         List<Booking> result;
         User booker = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Booking is not found"));
-        Timestamp currentMoment = Timestamp.valueOf(LocalDateTime.now());
+        LocalDateTime currentMoment = LocalDateTime.now();
 
         // переводим из String в ENUM
         BookingState stateBooking = Objects.isNull(state) ? BookingState.ALL : BookingState.of(state);
@@ -93,8 +98,10 @@ public class BookingServiceImpl implements BookingService {
                 result = bookingRepository.findAllByBookerAndStatusOrderByStartDesc(booker, BookingStatus.REJECTED);
                 break;
             case UNKNOWN:
+                throw new ValidationException("Unknown state: " + state);
             default:
-                throw new IllegalArgumentException("incorrect state");
+                result = null;
+                break;
         }
         return result;
     }
@@ -104,7 +111,7 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> getAllItemsByOwner(Long userId, String state) {
         List<Booking> result;
         User owner = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User have not items"));
-        Timestamp currentMoment = Timestamp.valueOf(LocalDateTime.now());
+        LocalDateTime currentMoment = LocalDateTime.now();
 
         // переводим из String в ENUM
         BookingState stateBooking = Objects.isNull(state) ? BookingState.ALL : BookingState.of(state);
@@ -129,28 +136,30 @@ public class BookingServiceImpl implements BookingService {
                 result = bookingRepository.findAllByOwnerAndStatus(owner, BookingStatus.REJECTED);
                 break;
             case UNKNOWN:
+                throw new ValidationException("Unknown state: " + state);
             default:
-                throw new IllegalArgumentException("incorrect state");
+                result = null;
+                break;
         }
         return result;
     }
 
     private void validate(Booking booking, Item item) {
         if (!item.getAvailable()) {
-            throw new IllegalArgumentException("item is not available");
+            throw new ValidationException("item is not available");
         }
         LocalDateTime now = LocalDateTime.now();
         if (booking.getStart().isBefore(now)) {
-            throw new IllegalArgumentException("start date before now");
+            throw new ValidationException("start date before now");
         }
         if (booking.getEnd().isBefore(now)) {
-            throw new IllegalArgumentException("end date before now");
+            throw new ValidationException("end date before now");
         }
         if (booking.getEnd().isBefore(booking.getStart())) {
-            throw new IllegalArgumentException("end date before start date");
+            throw new ValidationException("end date before start date");
         }
         if (Objects.equals(booking.getBooker().getId(), item.getOwner().getId())) {
-            throw new IllegalArgumentException("owner could not be booker");
+            throw new NotFoundException("owner could not be booker");
         }
     }
 
