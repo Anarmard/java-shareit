@@ -28,7 +28,6 @@ public class ItemController {
     @PostMapping
     public ItemResponseDto add(@RequestHeader("X-Sharer-User-Id") Long userId,
                                @Valid @RequestBody ItemCreateRequestDto itemCreateRequest) {
-
         userService.getUserById(userId);
         Item currentItem = itemMapper.toItem(itemCreateRequest, userId);
         Item returnedItem = itemService.addNewItem(currentItem);

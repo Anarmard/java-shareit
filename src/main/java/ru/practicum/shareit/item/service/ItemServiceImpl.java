@@ -93,7 +93,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item addNewItem(Item item) {
-        return itemRepository.save(item);
+        itemRepository.save(item);
+        return getItem(item.getId());
     }
 
     @Override
