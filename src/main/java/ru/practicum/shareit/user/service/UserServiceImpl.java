@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(Long userId, User user) {
+
         if (!checkIsEmailUnique(user)) {
             throw new AlreadyExistsException("Email is not unique.");
         }

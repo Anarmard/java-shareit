@@ -52,8 +52,18 @@ public class ItemServiceImpl implements ItemService {
         // только владелец вещи может видеть последнее и будущее бронирование
         if (Objects.equals(itemFromDB.getOwner().getId(), userId)) {
             // нашли бронирования у данного item - последнее и будущее
-            Booking lastBooking = bookingRepository.findFirstByItemAndStatusOrderByStartAsc(itemFromDB, BookingStatus.APPROVED);
-            Booking nextBooking = bookingRepository.findFirstByItemAndStatusOrderByEndDesc(itemFromDB, BookingStatus.APPROVED);
+            List<Booking> lastListBooking = bookingRepository.findLastBooking(itemFromDB, BookingStatus.APPROVED, LocalDateTime.now());
+            List<Booking> nextListBooking = bookingRepository.findNextBooking(itemFromDB, BookingStatus.APPROVED, LocalDateTime.now());
+
+            Booking lastBooking = null;
+            if (!lastListBooking.isEmpty()) {
+                lastBooking = lastListBooking.get(0);
+            }
+
+            Booking nextBooking = null;
+            if (!nextListBooking.isEmpty()) {
+                nextBooking = nextListBooking.get(0);
+            }
 
             // убрали лишние данные (оставили только даты)
             BookingResponseDateDto lastBookingResponseDto = bookingMapper.toBookingDateDto(lastBooking);
