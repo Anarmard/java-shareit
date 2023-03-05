@@ -28,7 +28,7 @@ public class Item {
     private Boolean available; // статус о том, доступна или нет вещь для аренды
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booker_id")
+    @JoinColumn(name = "owner_id")
     private User owner; // владелец вещи
 
     @ManyToOne(fetch = FetchType.LAZY)
