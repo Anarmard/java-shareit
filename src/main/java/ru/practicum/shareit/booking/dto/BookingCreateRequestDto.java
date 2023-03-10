@@ -5,12 +5,10 @@ import lombok.Getter;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
 import java.time.LocalDateTime;
 
-@Valid
 @Getter
 @AllArgsConstructor // конструктор на все параметры
 public class BookingCreateRequestDto {

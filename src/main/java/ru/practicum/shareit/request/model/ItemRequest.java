@@ -14,8 +14,6 @@ import java.time.LocalDateTime;
 public class ItemRequest {
 
     @Id
-    //@SequenceGenerator(name = "pk_sequence", schema = "public", sequenceName = "requests_id_seq", allocationSize = 1)
-    //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pk_sequence")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false, unique = true)
     private Long id; // уникальный идентификатор запроса

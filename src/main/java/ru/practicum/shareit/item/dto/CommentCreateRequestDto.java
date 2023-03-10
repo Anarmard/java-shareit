@@ -3,13 +3,11 @@ package ru.practicum.shareit.item.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserCreateRequestDto;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
-@Valid
 @Getter
 @AllArgsConstructor // конструктор на все параметры
 public class CommentCreateRequestDto {
@@ -21,7 +19,7 @@ public class CommentCreateRequestDto {
 
     private Item item;
 
-    private User authorName;
+    private UserCreateRequestDto authorName;
 
     private LocalDateTime created;
 }

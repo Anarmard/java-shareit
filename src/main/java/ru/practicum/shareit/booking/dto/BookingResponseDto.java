@@ -6,10 +6,8 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 
-@Valid
 @Getter
 @AllArgsConstructor // конструктор на все параметры
 public class BookingResponseDto {

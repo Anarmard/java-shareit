@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ru.practicum.shareit.booking.model.BookingStatus;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 
-@Valid
 @Getter
 @AllArgsConstructor // конструктор на все параметры
 public class BookingResponseDateDto {

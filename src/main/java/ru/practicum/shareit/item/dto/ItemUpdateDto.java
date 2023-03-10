@@ -5,9 +5,6 @@ import lombok.Getter;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.dto.UserCreateRequestDto;
 
-import javax.validation.Valid;
-
-@Valid
 @Getter
 @AllArgsConstructor // конструктор на все параметры
 public class ItemUpdateDto {
