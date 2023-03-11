@@ -56,13 +56,13 @@ public class UserServiceImpl implements UserService {
     }
 
     public boolean checkIsEmailUnique(User user) {
-        for (User u: getAllUsers()) {
-            if (Objects.equals(user.getEmail(), u.getEmail()) &&
-                    (!Objects.equals(user.getId(), u.getId()))) {
-                return false;
-            }
+        if (repository.findUserByEmail(user.getEmail()) == null) {
+            // не нашли юзера с таким email
+            return true;
+        } else {
+            User u = repository.findUserByEmail(user.getEmail());
+            // нашли юзера с таким email, но теперь проверяем id - если одинаковые, значит это один и тот же user
+            return Objects.equals(user.getId(), u.getId());
         }
-        return true;
     }
-
 }

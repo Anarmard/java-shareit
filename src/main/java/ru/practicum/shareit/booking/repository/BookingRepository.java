@@ -24,6 +24,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findPastByBooker(@Param("booker") User booker, @Param("now") LocalDateTime now);
 
     @Query("select b from Booking b " +
+            "where b.booker = :booker and b.item = :item and b.end < :now order by b.start desc ")
+    List<Booking> findBookingByBookerAndByItem(@Param("booker") User booker,
+                                               @Param("item") Item item,
+                                               @Param("now") LocalDateTime now);
+
+    @Query("select b from Booking b " +
             "where b.booker = :booker and b.start > :now order by b.start desc ")
     List<Booking> findFutureByBooker(@Param("booker") User booker, @Param("now") LocalDateTime now);
 
@@ -54,10 +60,28 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b from Booking b " +
             "where b.item = :item and b.status = :status and b.start < :now " +
             "order by b.start desc")
-    List<Booking> findLastBooking(@Param("item") Item item, @Param("status")BookingStatus status, @Param("now") LocalDateTime now);
+    List<Booking> findLastBookingOfItem(@Param("item") Item item,
+                                        @Param("status")BookingStatus status,
+                                        @Param("now") LocalDateTime now);
 
     @Query("select b from Booking b " +
             "where b.item = :item and b.status = :status and b.start > :now " +
             "order by b.start")
-    List<Booking> findNextBooking(@Param("item") Item item, @Param("status")BookingStatus status, @Param("now") LocalDateTime now);
+    List<Booking> findNextBookingOfItem(@Param("item") Item item,
+                                        @Param("status")BookingStatus status,
+                                        @Param("now") LocalDateTime now);
+
+    @Query("select b from Booking b " +
+            "where b.item.owner = :owner and b.status = :status and b.start < :now " +
+            "order by b.start desc")
+    List<Booking> findLastBookingForOwner(@Param("owner") User owner,
+                                        @Param("status")BookingStatus status,
+                                        @Param("now") LocalDateTime now);
+
+    @Query("select b from Booking b " +
+            "where b.item.owner = :owner and b.status = :status and b.start > :now " +
+            "order by b.start")
+    List<Booking> findNextBookingForOwner(@Param("owner") User owner,
+                                        @Param("status")BookingStatus status,
+                                        @Param("now") LocalDateTime now);
 }

@@ -6,6 +6,9 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 
 import java.time.LocalDateTime;
 
+// отличается от BookingResponseDto тем, что здесь не Item и User, а их ID.
+// этот dto используется для nextBooking & lastBooking
+
 @Getter
 @AllArgsConstructor // конструктор на все параметры
 public class BookingResponseDateDto {

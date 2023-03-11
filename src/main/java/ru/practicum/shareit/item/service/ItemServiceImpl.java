@@ -52,8 +52,10 @@ public class ItemServiceImpl implements ItemService {
         // только владелец вещи может видеть последнее и будущее бронирование
         if (Objects.equals(itemFromDB.getOwner().getId(), userId)) {
             // нашли бронирования у данного item - последнее и будущее
-            List<Booking> lastListBooking = bookingRepository.findLastBooking(itemFromDB, BookingStatus.APPROVED, LocalDateTime.now());
-            List<Booking> nextListBooking = bookingRepository.findNextBooking(itemFromDB, BookingStatus.APPROVED, LocalDateTime.now());
+            List<Booking> lastListBooking =
+                    bookingRepository.findLastBookingOfItem(itemFromDB, BookingStatus.APPROVED, LocalDateTime.now());
+            List<Booking> nextListBooking =
+                    bookingRepository.findNextBookingOfItem(itemFromDB, BookingStatus.APPROVED, LocalDateTime.now());
 
             Booking lastBooking = null;
             if (!lastListBooking.isEmpty()) {
@@ -65,11 +67,11 @@ public class ItemServiceImpl implements ItemService {
                 nextBooking = nextListBooking.get(0);
             }
 
-            // убрали лишние данные (оставили только даты)
+            // переводим из Booking в DTO Booking
             BookingResponseDateDto lastBookingResponseDto = bookingMapper.toBookingDateDto(lastBooking);
             BookingResponseDateDto nextBookingResponseDto = bookingMapper.toBookingDateDto(nextBooking);
 
-            // сохранили полученные скоращенные броинрования в Item
+            // сохранили полученные DTO бронирования в Item
             itemBookingResponseDto.setLastBooking(lastBookingResponseDto);
             itemBookingResponseDto.setNextBooking(nextBookingResponseDto);
         }
@@ -82,11 +84,80 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemBookingResponseDto> getItemsBooking(Long userId) {
+        // выгрузили из БД User по его ID
         User userFromDB = userService.getUserById(userId);
+
+        // выгрузили из БД все Item, где владельцем является наш User из БД
         List<Item> itemListFromDB = itemRepository.findItemsByOwner(userFromDB);
+
+        // теперь надо добавить к каждому item lastbooking, nextbooking, comment
+        // 1. для начала выгрузим сразу все прошедшие бронирования (lastbooking), где user владелец
+        List<Booking> lastListBooking =
+                bookingRepository.findLastBookingForOwner(userFromDB, BookingStatus.APPROVED, LocalDateTime.now());
+
+        // 2. и выгрузим сразу все будущие бронирования (nextbooking), где user владелец
+        List<Booking> nextListBooking =
+                bookingRepository.findNextBookingForOwner(userFromDB, BookingStatus.APPROVED, LocalDateTime.now());
+
+        // 3. все комментарии к Item, где user владелец
+        List<Comment> allCommentsListForUser = commentRepository.findByAuthorId(userId);
+
         List<ItemBookingResponseDto> itemBookingResponseDtoList = new ArrayList<>();
+
+        // теперь надо добавить к каждому item lastbooking, nextbooking, comment
         for (Item itemFromDB : itemListFromDB) {
-            itemBookingResponseDtoList.add(getItemBooking(itemFromDB.getId(), userId));
+            ItemBookingResponseDto itemBookingResponseDto = itemMapper.toItemBookingDto(itemFromDB);
+
+            // 1. ищем lastbooking для текущего Item
+            Booking lastBooking = null;
+            for (Booking currentLastBooking : lastListBooking) {
+                if (Objects.equals(currentLastBooking.getItem(), itemFromDB)) {
+                    if (lastBooking == null) {
+                        lastBooking = currentLastBooking;
+                    }
+
+                    // если StartDate нового букинга позже уже сохраненного, то перезаписываем lastbooking
+                    if (currentLastBooking.getStart().isAfter(lastBooking.getStart())) {
+                        lastBooking = currentLastBooking;
+                    }
+                }
+            }
+
+            // 2. ищем nextbooking для текущего Item
+            Booking nextbooking = null;
+            for (Booking currentNextBooking : nextListBooking) {
+                if (Objects.equals(currentNextBooking.getItem(), itemFromDB)) {
+                    if (nextbooking == null) {
+                        nextbooking = currentNextBooking;
+                    }
+
+                    // если StartDate нового букинга раньше уже сохраненного, то перезаписываем nextbooking
+                    if (currentNextBooking.getStart().isBefore(nextbooking.getStart())) {
+                        nextbooking = currentNextBooking;
+                    }
+                }
+            }
+
+            // 3. ищем все комментарии к текущему Item
+            List<Comment> commentListOfItem = new ArrayList<>();
+            for (Comment c : allCommentsListForUser) {
+                if (Objects.equals(c.getItem(), itemFromDB)) {
+                    commentListOfItem.add(c);
+                }
+            }
+
+            // переводим из Booking в DTO Booking - для текущего Item
+            BookingResponseDateDto lastBookingResponseDto = bookingMapper.toBookingDateDto(lastBooking);
+            BookingResponseDateDto nextBookingResponseDto = bookingMapper.toBookingDateDto(nextbooking);
+            List <CommentResponseDto> commentResponseDtoList = commentMapper.toListCommentDto(commentListOfItem);
+
+            // сохранили полученные DTO бронирования в Item
+            itemBookingResponseDto.setLastBooking(lastBookingResponseDto);
+            itemBookingResponseDto.setNextBooking(nextBookingResponseDto);
+            itemBookingResponseDto.setComments(commentResponseDtoList);
+
+            // получившийся itemBookingResponseDto записываем в массив ответа itemBookingResponseDtoList
+            itemBookingResponseDtoList.add(itemBookingResponseDto);
         }
         return itemBookingResponseDtoList;
     }
@@ -134,7 +205,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public CommentResponseDto addComment(Comment comment) {
 
-        if (bookingRepository.findPastByBooker(comment.getAuthor(), LocalDateTime.now()).isEmpty()) {
+        if (bookingRepository.
+                findBookingByBookerAndByItem(comment.getAuthor(), comment.getItem(), LocalDateTime.now()).isEmpty()) {
             throw new ValidationException("user is not booker or booking has not yet finished");
         } else {
             comment.setCreated(LocalDateTime.now());
