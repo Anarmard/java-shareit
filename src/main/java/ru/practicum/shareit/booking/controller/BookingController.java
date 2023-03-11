@@ -59,7 +59,9 @@ public class BookingController {
     // Получение списка всех бронирований текущего пользователя
     @GetMapping
     public List<BookingResponseDto> getAllBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                  @RequestParam(value = "state", required = false) String state) {
+                                                  @RequestParam(value = "state",
+                                                          required = false,
+                                                          defaultValue = "ALL") String state) {
         userService.getUserById(userId);
         List<Booking> returnedListBooking;
         returnedListBooking = bookingService.getAllBooking(userId, state);

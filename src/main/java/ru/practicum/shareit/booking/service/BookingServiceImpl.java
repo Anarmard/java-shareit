@@ -76,7 +76,7 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime currentMoment = LocalDateTime.now();
 
         // переводим из String в ENUM
-        BookingState stateBooking = Objects.isNull(state) ? BookingState.ALL : BookingState.of(state);
+        BookingState stateBooking = BookingState.of(state);
 
         switch (stateBooking) {
             case ALL:
