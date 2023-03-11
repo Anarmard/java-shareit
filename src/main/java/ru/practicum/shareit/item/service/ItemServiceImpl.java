@@ -149,7 +149,7 @@ public class ItemServiceImpl implements ItemService {
             // переводим из Booking в DTO Booking - для текущего Item
             BookingResponseDateDto lastBookingResponseDto = bookingMapper.toBookingDateDto(lastBooking);
             BookingResponseDateDto nextBookingResponseDto = bookingMapper.toBookingDateDto(nextbooking);
-            List <CommentResponseDto> commentResponseDtoList = commentMapper.toListCommentDto(commentListOfItem);
+            List<CommentResponseDto> commentResponseDtoList = commentMapper.toListCommentDto(commentListOfItem);
 
             // сохранили полученные DTO бронирования в Item
             itemBookingResponseDto.setLastBooking(lastBookingResponseDto);
@@ -205,8 +205,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public CommentResponseDto addComment(Comment comment) {
 
-        if (bookingRepository.
-                findBookingByBookerAndByItem(comment.getAuthor(), comment.getItem(), LocalDateTime.now()).isEmpty()) {
+        if (bookingRepository
+                .findBookingByBookerAndByItem(comment.getAuthor(), comment.getItem(), LocalDateTime.now()).isEmpty()) {
             throw new ValidationException("user is not booker or booking has not yet finished");
         } else {
             comment.setCreated(LocalDateTime.now());
