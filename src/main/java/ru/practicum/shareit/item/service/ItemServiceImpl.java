@@ -9,14 +9,14 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
-import ru.practicum.shareit.item.dto.CommentResponseDto;
-import ru.practicum.shareit.item.dto.ItemBookingResponseDto;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -35,8 +35,8 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
     private final BookingMapper bookingMapper;
     private final CommentMapper commentMapper;
+    private final UserMapper userMapper;
 
-    @Override
     public Item getItem(Long itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item is not found"));
@@ -44,6 +44,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemBookingResponseDto getItemBooking(Long itemId, Long userId) {
+        // проверка есть ли User с таким id
+        userService.getUserDtoById(userId);
 
         // нашли Item по Id
         Item itemFromDB = getItem(itemId);
@@ -85,7 +87,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemBookingResponseDto> getItemsBooking(Long userId) {
         // выгрузили из БД User по его ID
-        User userFromDB = userService.getUserById(userId);
+        User userFromDB = userMapper.toUser(userService.getUserDtoById(userId), userId);
 
         // выгрузили из БД все Item, где владельцем является наш User из БД
         List<Item> itemListFromDB = itemRepository.findItemsByOwner(userFromDB);
@@ -163,12 +165,22 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item addNewItem(Item item) {
-        return itemRepository.save(item);
+    public ItemResponseDto addNewItem(ItemCreateRequestDto itemCreateRequestDto, Long userId) {
+        // проверка есть ли User с таким id
+        userService.getUserDtoById(userId);
+
+        Item currentItem = itemMapper.toItem(itemCreateRequestDto, userId);
+
+        return itemMapper.toItemDto(itemRepository.save(currentItem));
     }
 
     @Override
-    public Item updateItem(Long itemId, Item item) {
+    public ItemResponseDto updateItem(Long itemId, ItemUpdateDto updateItemDto, Long userId) {
+        // проверка есть ли User с таким id
+        userService.getUserDtoById(userId);
+
+        Item item = itemMapper.toItem(updateItemDto, userId);
+
         if (!Objects.equals(item.getOwner().getId(), getItem(itemId).getOwner().getId())) {
             throw new NotFoundException("user is not owner");
         }
@@ -185,16 +197,22 @@ public class ItemServiceImpl implements ItemService {
             itemFromDB.setAvailable(item.getAvailable());
         }
         itemRepository.save(itemFromDB);
-        return itemFromDB;
+        return itemMapper.toItemDto(itemFromDB);
     }
 
     @Override
-    public List<Item> getItemsBySearch(String text) {
-        return itemRepository.searchItem(text);
+    public List<ItemResponseDto> getItemsBySearch(String text) {
+        if (text.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return itemMapper.toListItemDto(itemRepository.searchItem(text));
     }
 
     @Override
     public void deleteItem(Long userId, Long itemId) {
+        // проверка есть ли User с таким id
+        userService.getUserDtoById(userId);
+
         if (!Objects.equals(userId, getItem(itemId).getOwner().getId())) {
             throw new NotFoundException("user is not owner");
         }
@@ -203,7 +221,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public CommentResponseDto addComment(Comment comment) {
+    public CommentResponseDto addComment(Long userId, CommentCreateRequestDto commentCreateRequestDto, Long itemId) {
+        Comment comment = commentMapper.toComment(commentCreateRequestDto);
+        comment.setItem(getItem(itemId));
+        comment.setAuthor(userMapper.toUser(userService.getUserDtoById(userId), userId));
 
         if (bookingRepository
                 .findBookingByBookerAndByItem(comment.getAuthor(), comment.getItem(), LocalDateTime.now()).isEmpty()) {

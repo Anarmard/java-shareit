@@ -24,4 +24,7 @@ public interface UserMapper {
 
     @Mapping(target = "id", source = "userId")
     User toUser(UserUpdateDto userDto, Long userId);
+
+    @Mapping(target = "id", source = "userId")
+    User toUser(UserResponseDto userResponseDto, Long userId);
 }
