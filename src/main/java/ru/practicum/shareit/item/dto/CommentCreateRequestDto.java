@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dto.UserCreateRequestDto;
 
 import javax.validation.constraints.NotBlank;
@@ -17,7 +16,7 @@ public class CommentCreateRequestDto {
     @NotBlank
     private String text;
 
-    private Item item;
+    private ItemCreateRequestDto item;
 
     private UserCreateRequestDto authorName;
 

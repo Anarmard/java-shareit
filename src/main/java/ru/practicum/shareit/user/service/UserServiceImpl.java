@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserDto(getUserById(userId));
     }
 
-    public User getUserById(Long userId) {
+    private User getUserById(Long userId) {
         return repository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
     }
@@ -67,11 +67,11 @@ public class UserServiceImpl implements UserService {
     }
 
     public boolean checkIsEmailUnique(User user) {
-        if (repository.findUserByEmail(user.getEmail()) == null) {
+        User u = repository.findUserByEmail(user.getEmail());
+        if (u == null) {
             // не нашли юзера с таким email
             return true;
         } else {
-            User u = repository.findUserByEmail(user.getEmail());
             // нашли юзера с таким email, но теперь проверяем id - если одинаковые, значит это один и тот же user
             return Objects.equals(user.getId(), u.getId());
         }

@@ -21,9 +21,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -97,61 +95,67 @@ public class ItemServiceImpl implements ItemService {
         List<Booking> lastListBooking =
                 bookingRepository.findLastBookingForOwner(userFromDB, BookingStatus.APPROVED, LocalDateTime.now());
 
+        // перекладываем в map, где ключ Item, сохраняем только lastbooking
+        final Map<Item, Booking> lastMapBooking = new HashMap<>();
+        for (Booking b : lastListBooking) {
+            if (lastMapBooking.containsKey(b.getItem())) {
+                Booking bFromMap = lastMapBooking.get(b.getItem());
+                if (b.getStart().isAfter(bFromMap.getStart())) {
+                    lastMapBooking.put(b.getItem(), b);
+                }
+            } else {
+                // такого item в map еще нет, записываем без сравнений
+                lastMapBooking.put(b.getItem(), b);
+            }
+        }
+
         // 2. и выгрузим сразу все будущие бронирования (nextbooking), где user владелец
         List<Booking> nextListBooking =
                 bookingRepository.findNextBookingForOwner(userFromDB, BookingStatus.APPROVED, LocalDateTime.now());
 
+        // перекладываем в map, где ключ Item, сохраняем только nextbooking
+        final Map<Item, Booking> nextMapBooking = new HashMap<>();
+        for (Booking b : nextListBooking) {
+            if (nextMapBooking.containsKey(b.getItem())) {
+                Booking bFromMap = nextMapBooking.get(b.getItem());
+                if (b.getStart().isBefore(bFromMap.getStart())) {
+                    nextMapBooking.put(b.getItem(), b);
+                }
+            } else {
+                // такого item в map еще нет, записываем без сравнений
+                nextMapBooking.put(b.getItem(), b);
+            }
+        }
+
         // 3. все комментарии к Item, где user владелец
         List<Comment> allCommentsListForUser = commentRepository.findByAuthorId(userId);
 
+        // перекладываем все комментарии в map, где ключ Item
+        final Map<Item, List<Comment>> commentMap = new HashMap<>();
+        for (Comment c : allCommentsListForUser) {
+            if (commentMap.containsKey(c.getItem())) {
+                // такой item уже есть, значит добавляем комментарий к существующему списку
+                commentMap.get(c.getItem()).add(c);
+            } else {
+                List<Comment> commentList = new ArrayList<>();
+                commentList.add(c);
+                commentMap.put(c.getItem(), commentList);
+            }
+        }
+
         List<ItemBookingResponseDto> itemBookingResponseDtoList = new ArrayList<>();
 
-        // теперь надо добавить к каждому item lastbooking, nextbooking, comment
+        // теперь надо перевести из Item в DTO
         for (Item itemFromDB : itemListFromDB) {
             ItemBookingResponseDto itemBookingResponseDto = itemMapper.toItemBookingDto(itemFromDB);
 
-            // 1. ищем lastbooking для текущего Item
-            Booking lastBooking = null;
-            for (Booking currentLastBooking : lastListBooking) {
-                if (Objects.equals(currentLastBooking.getItem(), itemFromDB)) {
-                    if (lastBooking == null) {
-                        lastBooking = currentLastBooking;
-                    }
-
-                    // если StartDate нового букинга позже уже сохраненного, то перезаписываем lastbooking
-                    if (currentLastBooking.getStart().isAfter(lastBooking.getStart())) {
-                        lastBooking = currentLastBooking;
-                    }
-                }
-            }
-
-            // 2. ищем nextbooking для текущего Item
-            Booking nextbooking = null;
-            for (Booking currentNextBooking : nextListBooking) {
-                if (Objects.equals(currentNextBooking.getItem(), itemFromDB)) {
-                    if (nextbooking == null) {
-                        nextbooking = currentNextBooking;
-                    }
-
-                    // если StartDate нового букинга раньше уже сохраненного, то перезаписываем nextbooking
-                    if (currentNextBooking.getStart().isBefore(nextbooking.getStart())) {
-                        nextbooking = currentNextBooking;
-                    }
-                }
-            }
-
-            // 3. ищем все комментарии к текущему Item
-            List<Comment> commentListOfItem = new ArrayList<>();
-            for (Comment c : allCommentsListForUser) {
-                if (Objects.equals(c.getItem(), itemFromDB)) {
-                    commentListOfItem.add(c);
-                }
-            }
-
             // переводим из Booking в DTO Booking - для текущего Item
-            BookingResponseDateDto lastBookingResponseDto = bookingMapper.toBookingDateDto(lastBooking);
-            BookingResponseDateDto nextBookingResponseDto = bookingMapper.toBookingDateDto(nextbooking);
-            List<CommentResponseDto> commentResponseDtoList = commentMapper.toListCommentDto(commentListOfItem);
+            BookingResponseDateDto lastBookingResponseDto =
+                    bookingMapper.toBookingDateDto(lastMapBooking.get(itemFromDB));
+            BookingResponseDateDto nextBookingResponseDto =
+                    bookingMapper.toBookingDateDto(nextMapBooking.get(itemFromDB));
+            List<CommentResponseDto> commentResponseDtoList =
+                    commentMapper.toListCommentDto(commentMap.get(itemFromDB));
 
             // сохранили полученные DTO бронирования в Item
             itemBookingResponseDto.setLastBooking(lastBookingResponseDto);
