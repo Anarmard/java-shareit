@@ -5,9 +5,6 @@ import ru.practicum.shareit.user.dto.UserResponseDto;
 
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @Data
 public class ItemRequestDto {
     private Long id; // уникальный идентификатор запроса
