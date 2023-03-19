@@ -2,28 +2,23 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.dto.UserCreateRequestDto;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor // конструктор на все параметры
-public class ItemCreateRequestDto {
+public class CommentCreateRequestDto {
 
     private Long id;
 
     @NotBlank
-    private String name;
+    private String text;
 
-    @NotBlank
-    private String description;
+    private ItemCreateRequestDto item;
 
-    @NotNull
-    private Boolean available;
+    private UserCreateRequestDto authorName;
 
-    private UserCreateRequestDto owner;
-
-    private ItemRequestDto request;
+    private LocalDateTime created;
 }
