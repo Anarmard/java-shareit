@@ -141,8 +141,7 @@ public class BookingServiceImpl implements BookingService {
             case UNKNOWN:
                 throw new ValidationException("getAllBooking: Unknown state: " + state);
             default:
-                result = null;
-                break;
+                return null;
         }
         return bookingMapper.toListBookingDto(result.getContent());
     }
@@ -189,8 +188,7 @@ public class BookingServiceImpl implements BookingService {
             case UNKNOWN:
                 throw new ValidationException("getAllItemsByOwner: Unknown state: " + state);
             default:
-                result = null;
-                break;
+                return null;
         }
         return bookingMapper.toListBookingDto(result.getContent());
     }
