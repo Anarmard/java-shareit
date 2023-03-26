@@ -30,15 +30,17 @@ public class ItemRequestController {
 
     // получить список ВCЕХ запросов, созданных другими пользователями
     @GetMapping("/all")
-    public List<ItemRequestForResponseDto> getAllItemsRequests(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                               @RequestParam(value = "from", required = false) Integer from,
-                                                               @RequestParam(value = "size", required = false) Integer size) {
+    public List<ItemRequestForResponseDto> getAllItemsRequests(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
+            @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
         return itemRequestService.getAllItemRequests(userId, from, size);
     }
 
     // получить данные об одном конкретном запросе вместе с данными об ответах на него
     @GetMapping("/{requestId}")
-    public ItemRequestForResponseDto getItemRequest(@PathVariable Long requestId) {
-        return itemRequestService.getItemRequest(requestId);
+    public ItemRequestForResponseDto getItemRequest(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                    @PathVariable Long requestId) {
+        return itemRequestService.getItemRequest(userId, requestId);
     }
 }

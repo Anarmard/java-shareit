@@ -17,6 +17,6 @@ public interface ItemRequestService {
     List<ItemRequestForResponseDto> getAllItemRequests(Long userId, Integer from, Integer size);
 
     // получить данные об одном конкретном запросе вместе с данными об ответах на него
-    ItemRequestForResponseDto getItemRequest(Long requestId);
+    ItemRequestForResponseDto getItemRequest(Long userId, Long requestId);
 
 }

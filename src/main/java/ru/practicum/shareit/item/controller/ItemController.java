@@ -39,17 +39,19 @@ public class ItemController {
 
     // Просмотр владельцем списка всех его вещей с указанием названия и описания для каждой
     @GetMapping
-    public List<ItemBookingResponseDto> getItems(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                 @RequestParam(value = "from", required = false) Integer from,
-                                                 @RequestParam(value = "size", required = false) Integer size) {
+    public List<ItemBookingResponseDto> getItems(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
+            @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
         return itemService.getItemsBooking(userId, from, size);
     }
 
     // Поиск вещи потенциальным арендатором
     @GetMapping("/search")
-    public List<ItemResponseDto> getItemsBySearch(@RequestParam("text") String text,
-                                                  @RequestParam(value = "from", required = false) Integer from,
-                                                  @RequestParam(value = "size", required = false) Integer size) {
+    public List<ItemResponseDto> getItemsBySearch(
+            @RequestParam("text") String text,
+            @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
+            @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
         return itemService.getItemsBySearch(text, from, size);
     }
 

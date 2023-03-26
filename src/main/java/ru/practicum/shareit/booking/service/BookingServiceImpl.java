@@ -35,6 +35,16 @@ public class BookingServiceImpl implements BookingService {
     // добавление нового запроса на бронирование
     @Override
     public BookingResponseDto saveBooking(BookingCreateRequestDto bookingCreateRequestDto, Long userId) {
+        // start > end
+        if (bookingCreateRequestDto.getStart().isAfter(bookingCreateRequestDto.getEnd())) {
+            throw new ValidationException("approveBooking: start date is after end date");
+        }
+
+        // start = end
+        if (bookingCreateRequestDto.getStart().isEqual(bookingCreateRequestDto.getEnd())) {
+            throw new ValidationException("approveBooking: start date equal end date");
+        }
+
         // проверка есть ли User с таким id
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("saveBooking: User is not found"));
@@ -102,6 +112,14 @@ public class BookingServiceImpl implements BookingService {
     // Получение списка всех бронирований текущего пользователя
     @Override
     public List<BookingResponseDto> getAllBooking(Long userId, String state, Integer from, Integer size) {
+        if (size < 1) {
+            throw new ValidationException("Page size must not be less than one");
+        }
+
+        if (from < 0) {
+            throw new ValidationException("Index 'from' must not be less than zero");
+        }
+
         // сначала создаём описание сортировки по полю start
         Sort sortById = Sort.by(Sort.Direction.DESC, "start");
         // затем создаём описание "страницы" размером size элемента
@@ -139,7 +157,7 @@ public class BookingServiceImpl implements BookingService {
                 result = bookingRepository.findAllByBookerAndStatusOrderByStartDesc(booker, BookingStatus.REJECTED, page);
                 break;
             case UNKNOWN:
-                throw new ValidationException("getAllBooking: Unknown state: " + state);
+                throw new ValidationException("Unknown state: " + state);
             default:
                 return null;
         }
@@ -149,6 +167,14 @@ public class BookingServiceImpl implements BookingService {
     // Получение списка бронирований для всех вещей текущего пользователя
     @Override
     public List<BookingResponseDto> getAllItemsByOwner(Long userId, String state, Integer from, Integer size) {
+        if (size < 1) {
+            throw new ValidationException("Page size must not be less than one");
+        }
+
+        if (from < 0) {
+            throw new ValidationException("Index 'from' must not be less than zero");
+        }
+
         // сначала создаём описание сортировки по полю start
         Sort sortById = Sort.by(Sort.Direction.DESC, "start");
         // затем создаём описание "страницы" размером size элемента
@@ -186,7 +212,7 @@ public class BookingServiceImpl implements BookingService {
                 result = bookingRepository.findAllByOwnerAndStatus(owner, BookingStatus.REJECTED, page);
                 break;
             case UNKNOWN:
-                throw new ValidationException("getAllItemsByOwner: Unknown state: " + state);
+                throw new ValidationException("Unknown state: " + state);
             default:
                 return null;
         }

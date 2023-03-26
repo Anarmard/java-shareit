@@ -15,6 +15,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = UserMapper.class)
 public interface ItemMapper {
 
+    @Mapping(target = "requestId", source = "request.id")
     ItemResponseDto toItemDto(Item item);
     // mapstruct сам генерит необходимый код для преобразования Item в ItemDto
 

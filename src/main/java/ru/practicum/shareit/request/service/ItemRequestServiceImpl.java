@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemForItemRequestDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -31,6 +32,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     // добавить новый запрос вещи
     @Override
     public ItemRequestForResponseDto addNewItemRequest(ItemRequestDto itemRequestDto, Long userId) {
+        // проверили User по его ID
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with such ID does not exist"));
+
         ItemRequest itemRequest = itemRequestMapper.toItemRequest(itemRequestDto, userId);
         itemRequest.setCreated(LocalDateTime.now());
         itemRequestRepository.save(itemRequest);
@@ -56,6 +60,14 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     // получить список ВCЕХ запросов, созданных другими пользователями
     @Override
     public List<ItemRequestForResponseDto> getAllItemRequests(Long userId, Integer from, Integer size) {
+        if (size < 1) {
+            throw new ValidationException("Page size must not be less than one");
+        }
+
+        if (from < 0) {
+            throw new ValidationException("Index 'from' must not be less than zero");
+        }
+
         // сначала создаём описание сортировки по полю created
         Sort sortByCreatedDate = Sort.by(Sort.Direction.DESC, "created");
         // затем создаём описание "страницы" размером size элемента
@@ -77,7 +89,14 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         for (Item item : itemListWithRequest) {
             if (item.getRequest() != null) {
                 ItemForItemRequestDto itemForItemRequestDto =
-                        new ItemForItemRequestDto(item.getId(), item.getName(), item.getOwner().getId());
+                        new ItemForItemRequestDto(
+                                item.getId(),
+                                item.getName(),
+                                item.getDescription(),
+                                item.getAvailable(),
+                                item.getOwner().getId(),
+                                item.getRequest().getId()
+                        );
                 if (itemRequestMap.containsKey(item.getRequest().getId())) {
                     // такой request.id уже есть, значит добавляем itemForItemRequestDto к существующему списку
                     itemRequestMap.get(item.getRequest().getId()).add(itemForItemRequestDto);
@@ -96,18 +115,27 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private List<ItemRequestForResponseDto> addItemsToItemsRequestsDto(Map<Long, List<ItemForItemRequestDto>> itemRequestMap,
                                                                        List<ItemRequest> itemRequestList) {
         List<ItemRequestForResponseDto> itemRequestForResponseDtoList = new ArrayList<>();
-        for (ItemRequest itemRequest : itemRequestList) {
-            ItemRequestForResponseDto itemRequestForResponseDto =
-                    itemRequestMapper.toItemRequestForResponseDto(itemRequest);
-            itemRequestForResponseDto.setItemsForItemRequestDtoList(itemRequestMap.get(itemRequest.getId()));
-            itemRequestForResponseDtoList.add(itemRequestForResponseDto);
+        if (!itemRequestList.isEmpty()) {
+            for (ItemRequest itemRequest : itemRequestList) {
+                ItemRequestForResponseDto itemRequestForResponseDto =
+                        itemRequestMapper.toItemRequestForResponseDto(itemRequest);
+                if (itemRequestMap.get(itemRequest.getId()) == null) {
+                    itemRequestForResponseDto.setItems(new ArrayList<>());
+                } else {
+                    itemRequestForResponseDto.setItems(itemRequestMap.get(itemRequest.getId()));
+                }
+                itemRequestForResponseDtoList.add(itemRequestForResponseDto);
+            }
         }
         return itemRequestForResponseDtoList;
     }
 
     // получить данные об одном конкретном запросе вместе с данными об ответах на него
     @Override
-    public ItemRequestForResponseDto getItemRequest(Long requestId) {
+    public ItemRequestForResponseDto getItemRequest(Long userId, Long requestId) {
+        // проверили User по его ID
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with such ID does not exist"));
+
         ItemRequest itemRequestFromDB = itemRequestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("ItemRequest is not found"));
 
@@ -117,10 +145,25 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         // добавляем список ответов на запрос
         List<Item> itemListWithRequest = itemRepository.findAll();
         for (Item item : itemListWithRequest) {
-            if (Objects.equals(item.getRequest().getId(), requestId)) {
-                ItemForItemRequestDto itemForItemRequestDto =
-                        new ItemForItemRequestDto(item.getId(), item.getName(), item.getOwner().getId());
-                itemRequestForResponseDto.getItemsForItemRequestDtoList().add(itemForItemRequestDto);
+            if (item.getRequest() != null) {
+                if (Objects.equals(item.getRequest().getId(), requestId)) {
+                    ItemForItemRequestDto itemForItemRequestDto =
+                            new ItemForItemRequestDto(
+                                    item.getId(),
+                                    item.getName(),
+                                    item.getDescription(),
+                                    item.getAvailable(),
+                                    item.getOwner().getId(),
+                                    item.getRequest().getId()
+                            );
+                    if (itemRequestForResponseDto.getItems() == null) {
+                        List<ItemForItemRequestDto> itemsList = new ArrayList<>();
+                        itemsList.add(itemForItemRequestDto);
+                        itemRequestForResponseDto.setItems(itemsList);
+                    } else {
+                        itemRequestForResponseDto.getItems().add(itemForItemRequestDto);
+                    }
+                }
             }
         }
 

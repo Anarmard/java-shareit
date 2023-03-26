@@ -7,6 +7,7 @@ import ru.practicum.shareit.user.dto.UserResponseDto;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
@@ -16,9 +17,11 @@ public class BookingCreateRequestDto {
     private Long id; // уникальный идентификатор бронирования
 
     @FutureOrPresent
+    @NotNull
     private LocalDateTime start; // дата и время начала бронирования
 
     @Future
+    @NotNull
     private LocalDateTime end; // дата и время конца бронирования
 
     private Long itemId; // ID вещь, которую пользователь бронирует

@@ -22,5 +22,5 @@ public class ItemRequestForResponseDto {
 
     private LocalDateTime created; // дата и время создания запроса
 
-    private List<ItemForItemRequestDto> itemsForItemRequestDtoList; // список ответов на данный запрос
+    private List<ItemForItemRequestDto> items; // список ответов на данный запрос
 }
