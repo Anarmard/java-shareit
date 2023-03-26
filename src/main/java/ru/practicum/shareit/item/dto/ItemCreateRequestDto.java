@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.dto.UserCreateRequestDto;
 
 import javax.validation.constraints.NotBlank;
@@ -25,5 +24,5 @@ public class ItemCreateRequestDto {
 
     private UserCreateRequestDto owner;
 
-    private ItemRequestDto request;
+    private Long requestId;
 }

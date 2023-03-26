@@ -21,10 +21,11 @@ public interface ItemMapper {
     List<ItemResponseDto> toListItemDto(List<Item> itemList);
 
     @Mapping(target = "owner.id", source = "userId")
+    @Mapping(target = "request", ignore = true)
     Item toItem(ItemCreateRequestDto itemCreateRequest, Long userId);
 
-    @Mapping(target = "owner.id", source = "userId")
-    Item toItem(ItemBookingResponseDto itemBookingResponseDto, Long userId);
+    //@Mapping(target = "owner.id", source = "userId")
+    //Item toItem(ItemBookingResponseDto itemBookingResponseDto, Long userId);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "request", ignore = true)

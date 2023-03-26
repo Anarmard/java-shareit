@@ -1,6 +1,10 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingResponseDateDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -16,9 +20,9 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -27,13 +31,13 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
-    private final UserService userService;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
+    private final UserRepository userRepository;
     private final ItemMapper itemMapper;
     private final BookingMapper bookingMapper;
     private final CommentMapper commentMapper;
-    private final UserMapper userMapper;
 
     public Item getItem(Long itemId) {
         return itemRepository.findById(itemId)
@@ -43,7 +47,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemBookingResponseDto getItemBooking(Long itemId, Long userId) {
         // проверка есть ли User с таким id
-        userService.getUserDtoById(userId);
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User is not found"));
 
         // нашли Item по Id
         Item itemFromDB = getItem(itemId);
@@ -83,12 +88,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemBookingResponseDto> getItemsBooking(Long userId) {
+    public List<ItemBookingResponseDto> getItemsBooking(Long userId, Integer from, Integer size) {
+        // сначала создаём описание сортировки по полю id
+        Sort sortById = Sort.by(Sort.Direction.DESC, "id");
+        // затем создаём описание "страницы" размером size элемента
+        Pageable page = PageRequest.of(from / size, size, sortById);
+
         // выгрузили из БД User по его ID
-        User userFromDB = userMapper.toUser(userService.getUserDtoById(userId), userId);
+        User userFromDB = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User is not found"));
 
         // выгрузили из БД все Item, где владельцем является наш User из БД
-        List<Item> itemListFromDB = itemRepository.findItemsByOwner(userFromDB);
+        Page<Item> itemListFromDB = itemRepository.findItemsByOwnerId(userId, page);
 
         // теперь надо добавить к каждому item lastbooking, nextbooking, comment
         // 1. для начала выгрузим сразу все прошедшие бронирования (lastbooking), где user владелец
@@ -146,7 +157,7 @@ public class ItemServiceImpl implements ItemService {
         List<ItemBookingResponseDto> itemBookingResponseDtoList = new ArrayList<>();
 
         // теперь надо перевести из Item в DTO
-        for (Item itemFromDB : itemListFromDB) {
+        for (Item itemFromDB : itemListFromDB.getContent()) {
             ItemBookingResponseDto itemBookingResponseDto = itemMapper.toItemBookingDto(itemFromDB);
 
             // переводим из Booking в DTO Booking - для текущего Item
@@ -171,18 +182,26 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemResponseDto addNewItem(ItemCreateRequestDto itemCreateRequestDto, Long userId) {
         // проверка есть ли User с таким id
-        userService.getUserDtoById(userId);
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User is not found"));
 
+        // перевели из DTO в model Item
         Item currentItem = itemMapper.toItem(itemCreateRequestDto, userId);
 
+        if (itemCreateRequestDto.getRequestId() != null) {
+            currentItem.setRequest(itemRequestRepository.findById(itemCreateRequestDto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException("ItemRequest with such ID is not found")));
+        }
         return itemMapper.toItemDto(itemRepository.save(currentItem));
     }
 
     @Override
     public ItemResponseDto updateItem(Long itemId, ItemUpdateDto updateItemDto, Long userId) {
         // проверка есть ли User с таким id
-        userService.getUserDtoById(userId);
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User is not found"));
 
+        // перевели из DTO в model Item
         Item item = itemMapper.toItem(updateItemDto, userId);
 
         if (!Objects.equals(item.getOwner().getId(), getItem(itemId).getOwner().getId())) {
@@ -205,17 +224,25 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemResponseDto> getItemsBySearch(String text) {
+    public List<ItemResponseDto> getItemsBySearch(String text, Integer from, Integer size) {
         if (text.isEmpty()) {
             return new ArrayList<>();
         }
-        return itemMapper.toListItemDto(itemRepository.searchItem(text));
+        // сначала создаём описание сортировки по полю id
+        Sort sortById = Sort.by(Sort.Direction.DESC, "id");
+        // затем создаём описание "страницы" размером size элемента
+        Pageable page = PageRequest.of(from / size, size, sortById);
+
+        Page<Item> itemList = itemRepository.searchItem(text, page);
+
+        return itemMapper.toListItemDto(itemList.getContent());
     }
 
     @Override
     public void deleteItem(Long userId, Long itemId) {
         // проверка есть ли User с таким id
-        userService.getUserDtoById(userId);
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User is not found"));
 
         if (!Objects.equals(userId, getItem(itemId).getOwner().getId())) {
             throw new NotFoundException("user is not owner");
@@ -228,7 +255,8 @@ public class ItemServiceImpl implements ItemService {
     public CommentResponseDto addComment(Long userId, CommentCreateRequestDto commentCreateRequestDto, Long itemId) {
         Comment comment = commentMapper.toComment(commentCreateRequestDto);
         comment.setItem(getItem(itemId));
-        comment.setAuthor(userMapper.toUser(userService.getUserDtoById(userId), userId));
+        comment.setAuthor(userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User is not found")));
 
         if (bookingRepository
                 .findBookingByBookerAndByItem(comment.getAuthor(), comment.getItem(), LocalDateTime.now()).isEmpty()) {

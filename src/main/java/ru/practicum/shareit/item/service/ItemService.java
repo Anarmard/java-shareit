@@ -12,9 +12,9 @@ public interface ItemService {
 
     ItemBookingResponseDto getItemBooking(Long itemId, Long userId);
 
-    List<ItemBookingResponseDto> getItemsBooking(Long userId);
+    List<ItemBookingResponseDto> getItemsBooking(Long userId, Integer from, Integer size);
 
-    List<ItemResponseDto> getItemsBySearch(String text);
+    List<ItemResponseDto> getItemsBySearch(String text, Integer from, Integer size);
 
     void deleteItem(Long userId, Long itemId);
 
