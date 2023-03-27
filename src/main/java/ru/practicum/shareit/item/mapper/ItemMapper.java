@@ -5,7 +5,6 @@ import org.mapstruct.Mapping;
 import ru.practicum.shareit.item.dto.ItemBookingResponseDto;
 import ru.practicum.shareit.item.dto.ItemCreateRequestDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
-import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.mapper.UserMapper;
 
@@ -25,13 +24,10 @@ public interface ItemMapper {
     @Mapping(target = "request", ignore = true)
     Item toItem(ItemCreateRequestDto itemCreateRequest, Long userId);
 
-    //@Mapping(target = "owner.id", source = "userId")
-    //Item toItem(ItemBookingResponseDto itemBookingResponseDto, Long userId);
-
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "request", ignore = true)
     @Mapping(target = "owner.id", source = "userId")
-    Item toItem(ItemUpdateDto itemDto, Long userId);
+    Item toItem(ItemResponseDto itemDto, Long userId);
 
     ItemBookingResponseDto toItemBookingDto(Item item);
 }

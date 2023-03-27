@@ -8,7 +8,7 @@ public interface ItemService {
 
     ItemResponseDto addNewItem(ItemCreateRequestDto itemCreateRequestDto, Long userId);
 
-    ItemResponseDto updateItem(Long itemId, ItemUpdateDto updateItemDto, Long userId);
+    ItemResponseDto updateItem(Long itemId, ItemResponseDto itemResponseDto, Long userId);
 
     ItemBookingResponseDto getItemBooking(Long itemId, Long userId);
 

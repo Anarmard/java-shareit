@@ -204,13 +204,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemResponseDto updateItem(Long itemId, ItemUpdateDto updateItemDto, Long userId) {
+    public ItemResponseDto updateItem(Long itemId, ItemResponseDto itemResponseDto, Long userId) {
         // проверка есть ли User с таким id
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
 
         // перевели из DTO в model Item
-        Item item = itemMapper.toItem(updateItemDto, userId);
+        Item item = itemMapper.toItem(itemResponseDto, userId);
 
         if (!Objects.equals(item.getOwner().getId(), getItem(itemId).getOwner().getId())) {
             throw new NotFoundException("user is not owner");
