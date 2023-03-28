@@ -59,8 +59,8 @@ public class BookingControllerTest {
 
     private final BookingCreateRequestDto bookingCreateRequestDto = new BookingCreateRequestDto(
             1L,
-            LocalDateTime.of(2023, 3, 28, 3, 0),
-            LocalDateTime.of(2023, 3, 28, 4, 0),
+            LocalDateTime.of(2023, 5, 28, 3, 0),
+            LocalDateTime.of(2023, 6, 28, 4, 0),
             1L,
             userResponseDto,
             BookingStatus.WAITING
@@ -68,8 +68,8 @@ public class BookingControllerTest {
 
     private final BookingResponseDto bookingResponseDto = new BookingResponseDto(
             1L,
-            LocalDateTime.of(2023, 3, 28, 3, 0),
-            LocalDateTime.of(2023, 3, 28, 4, 0),
+            LocalDateTime.of(2023, 5, 28, 3, 0),
+            LocalDateTime.of(2023, 6, 28, 4, 0),
             itemResponseDto,
             userResponseDto,
             BookingStatus.WAITING
