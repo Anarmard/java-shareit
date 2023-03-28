@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.shareit.booking.model.BookingStatus;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 // этот dto используется для nextBooking & lastBooking
 
 @Getter
+@Setter
 @AllArgsConstructor // конструктор на все параметры
 public class BookingResponseDateDto {
     private Long id; // уникальный идентификатор бронирования
