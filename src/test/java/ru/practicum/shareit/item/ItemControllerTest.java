@@ -26,10 +26,10 @@ import java.util.List;
 @WebMvcTest(controllers = ItemController.class)
 public class ItemControllerTest {
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @MockBean
-    ItemService itemService;
+    private ItemService itemService;
 
     @Autowired
     private MockMvc mvc;
@@ -98,6 +98,9 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.available", Matchers.is(itemResponseDto.getAvailable()), Boolean.class))
                 .andExpect(jsonPath("$.requestId", Matchers.is(itemResponseDto.getRequestId()), Long.class))
                 .andExpect(status().isOk());
+
+        Mockito.verify(itemService, Mockito.times(1))
+                .addNewItem(any(), anyLong());
     }
 
     // тестируем метод update
@@ -118,6 +121,9 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.available", Matchers.is(itemResponseDto.getAvailable()), Boolean.class))
                 .andExpect(jsonPath("$.requestId", Matchers.is(itemResponseDto.getRequestId()), Long.class))
                 .andExpect(status().isOk());
+
+        Mockito.verify(itemService, Mockito.times(1))
+                .updateItem(anyLong(), any(), anyLong());
     }
 
     // тестируем метод get
@@ -136,6 +142,9 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.description", Matchers.is(itemBookingResponseDto.getDescription()), String.class))
                 .andExpect(jsonPath("$.available", Matchers.is(itemBookingResponseDto.getAvailable()), Boolean.class))
                 .andExpect(status().isOk());
+
+        Mockito.verify(itemService, Mockito.times(1))
+                .getItemBooking(anyLong(), anyLong());
     }
 
     // тестируем метод getItems
@@ -154,6 +163,9 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("[0].description", Matchers.is(itemBookingResponseDto.getDescription()), String.class))
                 .andExpect(jsonPath("[0].available", Matchers.is(itemBookingResponseDto.getAvailable()), Boolean.class))
                 .andExpect(status().isOk());
+
+        Mockito.verify(itemService, Mockito.times(1))
+                .getItemsBooking(anyLong(), anyInt(), anyInt());
     }
 
     // тестируем метод getItemsBySearch
@@ -171,6 +183,9 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("[0].description", Matchers.is(itemResponseDto.getDescription()), String.class))
                 .andExpect(jsonPath("[0].available", Matchers.is(itemResponseDto.getAvailable()), Boolean.class))
                 .andExpect(status().isOk());
+
+        Mockito.verify(itemService, Mockito.times(1))
+                .getItemsBySearch(anyString(), anyInt(), anyInt());
     }
 
     // тестируем метод addComment
@@ -188,13 +203,16 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.id", Matchers.is(commentResponseDto.getId()), Long.class))
                 .andExpect(jsonPath("$.text", Matchers.is(commentResponseDto.getText()), String.class))
                 .andExpect(status().isOk());
+
+        Mockito.verify(itemService, Mockito.times(1))
+                .addComment(anyLong(), any(), anyLong());
     }
 
     // тестируем метод deleteItem
     @Test
     void deleteItemTest() throws Exception {
         mvc.perform(delete("/items/1")
-                        .header("X-Later-User-Id", 1L)
+                        .header("X-Sharer-User-Id", 1L)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

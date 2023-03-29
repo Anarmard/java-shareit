@@ -29,10 +29,10 @@ import java.util.List;
 @WebMvcTest(controllers = ItemRequestController.class)
 public class ItemRequestControllerTest {
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @MockBean
-    ItemRequestService itemRequestService;
+    private ItemRequestService itemRequestService;
 
     @Autowired
     private MockMvc mvc;
@@ -86,6 +86,9 @@ public class ItemRequestControllerTest {
                 .andExpect(jsonPath("$.created",
                         Matchers.is(itemRequestForResponseDto.getCreated().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))))
                 .andExpect(status().isOk());
+
+        Mockito.verify(itemRequestService, Mockito.times(1))
+                .addNewItemRequest(any(), anyLong());
     }
 
     // тестируем метод getItemRequestsByOwner
@@ -107,6 +110,9 @@ public class ItemRequestControllerTest {
                 .andExpect(jsonPath("[0].created",
                         Matchers.is(itemRequestForResponseDto.getCreated().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))))
                 .andExpect(status().isOk());
+
+        Mockito.verify(itemRequestService, Mockito.times(1))
+                .getItemRequestsByOwner(anyLong());
     }
 
     // тестируем метод getAllItemsRequests
@@ -128,6 +134,9 @@ public class ItemRequestControllerTest {
                 .andExpect(jsonPath("[0].created",
                         Matchers.is(itemRequestForResponseDto.getCreated().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))))
                 .andExpect(status().isOk());
+
+        Mockito.verify(itemRequestService, Mockito.times(1))
+                .getAllItemRequests(anyLong(), anyInt(), anyInt());
     }
 
     // тестируем метод getItemRequest
@@ -150,6 +159,9 @@ public class ItemRequestControllerTest {
                 .andExpect(jsonPath("$.created",
                         Matchers.is(itemRequestForResponseDto.getCreated().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))))
                 .andExpect(status().isOk());
+
+        Mockito.verify(itemRequestService, Mockito.times(1))
+                .getItemRequest(anyLong(), anyLong());
     }
 
 }

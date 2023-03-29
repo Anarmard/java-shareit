@@ -31,10 +31,10 @@ import java.util.List;
 @WebMvcTest(controllers = BookingController.class)
 public class BookingControllerTest {
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @MockBean
-    BookingService bookingService;
+    private BookingService bookingService;
 
     @Autowired
     private MockMvc mvc;
@@ -95,6 +95,9 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$.status",
                         Matchers.is(bookingResponseDto.getStatus().toString()), String.class))
                 .andExpect(status().isOk());
+
+        Mockito.verify(bookingService, Mockito.times(1))
+                .saveBooking(any(), anyLong());
     }
 
     // тестируем метод approveBooking
@@ -116,6 +119,9 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$.status",
                         Matchers.is(bookingResponseDto.getStatus().toString()), String.class))
                 .andExpect(status().isOk());
+
+        Mockito.verify(bookingService, Mockito.times(1))
+                .approveBooking(anyLong(), anyLong(), anyBoolean());
     }
 
     // тестируем метод getBooking
@@ -137,6 +143,9 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$.status",
                         Matchers.is(bookingResponseDto.getStatus().toString()), String.class))
                 .andExpect(status().isOk());
+
+        Mockito.verify(bookingService, Mockito.times(1))
+                .getBooking(anyLong(), anyLong());
     }
 
     // тестируем метод getAllBooking
@@ -158,6 +167,9 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("[0].status",
                         Matchers.is(bookingResponseDto.getStatus().toString()), String.class))
                 .andExpect(status().isOk());
+
+        Mockito.verify(bookingService, Mockito.times(1))
+                .getAllBooking(anyLong(), anyString(), anyInt(), anyInt());
     }
 
     // тестируем метод getAllItemsByOwner
@@ -179,6 +191,9 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("[0].status",
                         Matchers.is(bookingResponseDto.getStatus().toString()), String.class))
                 .andExpect(status().isOk());
+
+        Mockito.verify(bookingService, Mockito.times(1))
+                .getAllItemsByOwner(anyLong(), anyString(), anyInt(), anyInt());
     }
 
 }

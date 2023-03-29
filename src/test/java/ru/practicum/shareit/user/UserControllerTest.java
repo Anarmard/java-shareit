@@ -26,10 +26,10 @@ import java.util.List;
 @WebMvcTest(controllers = UserController.class)
 public class UserControllerTest {
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @MockBean
-    UserService userService;
+    private UserService userService;
 
     @Autowired
     private MockMvc mvc;
@@ -55,6 +55,9 @@ public class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("[0].name", Matchers.is(userResponseDto.getName()), String.class))
                 .andExpect(status().isOk());
+
+        Mockito.verify(userService, Mockito.times(1))
+                .getAllUsers();
     }
 
     // тестируем метод getUserById
@@ -70,6 +73,9 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", Matchers.is(userResponseDto.getName()), String.class))
                 .andExpect(jsonPath("$.email", Matchers.is(userResponseDto.getEmail()), String.class))
                 .andExpect(status().isOk());
+
+        Mockito.verify(userService, Mockito.times(1))
+                .getUserDtoById(anyLong());
     }
 
     // тестируем метод saveNewUser
@@ -86,6 +92,9 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", Matchers.is(userResponseDto.getName()), String.class))
                 .andExpect(jsonPath("$.email", Matchers.is(userResponseDto.getEmail()), String.class))
                 .andExpect(status().isOk());
+
+        Mockito.verify(userService, Mockito.times(1))
+                .saveUser(any());
     }
 
     // тестируем метод updateUser
@@ -102,6 +111,9 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", Matchers.is(userResponseDto.getName()), String.class))
                 .andExpect(jsonPath("$.email", Matchers.is(userResponseDto.getEmail()), String.class))
                 .andExpect(status().isOk());
+
+        Mockito.verify(userService, Mockito.times(1))
+                .updateUser(anyLong(), any());
     }
 
     // тестируем метод deleteUser
