@@ -73,17 +73,19 @@ public class ItemServiceImplTest {
         itemService = new ItemServiceImpl(itemRepository, bookingRepository, commentRepository,
         itemRequestRepository, userRepository, itemMapper, bookingMapper, commentMapper);
 
+        // User
         user1 = new User(1L, "John", "john.doe@mail.com");
         user2 = new User(2L, "Bill", "bill.doe@mail.com");
         userCreateRequestDto1 = new UserCreateRequestDto(1L, "John", "john.doe@mail.com");
+        userResponseDto2 = new UserResponseDto(2L, "Bill", "bill.doe@mail.com");
 
-        userResponseDto2 = new UserResponseDto(1L, "John", "john.doe@mail.com");
-
+        // ItemRequest
         itemRequest = new ItemRequest(1L, "need drill", user2,
                 LocalDateTime.of(2023, 3, 28, 2,0));
         itemRequestDto = new ItemRequestDto(1L, "need drill", userResponseDto2,
                 LocalDateTime.of(2023, 3, 28, 2,0));
 
+        // Item
         item = new Item(1L,"drill","drill makita",true, user1, itemRequest);
         itemCreateRequestDto = new ItemCreateRequestDto(
                 1L,"drill","drill makita",true, userCreateRequestDto1, 1L);
@@ -104,7 +106,7 @@ public class ItemServiceImplTest {
         Mockito.when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
         Exception e = Assertions.assertThrows(NotFoundException.class,
-                ()-> itemService.getItem(2L));
+                () -> itemService.getItem(2L));
         Assertions.assertEquals("Item is not found", e.getMessage());
     }
 
@@ -136,7 +138,7 @@ public class ItemServiceImplTest {
         Mockito.when(userRepository.findById(3L))
                 .thenReturn(Optional.empty());
         Exception e = Assertions.assertThrows(NotFoundException.class,
-                ()-> itemService.getItemBooking(1L, 3L));
+                () -> itemService.getItemBooking(1L, 3L));
         Assertions.assertEquals("User is not found", e.getMessage());
     }
 
@@ -144,11 +146,11 @@ public class ItemServiceImplTest {
     @Test
     void getItemsBookingTest() {
         Exception e0 = Assertions.assertThrows(ValidationException.class,
-                ()-> itemService.getItemsBooking(1L, 15, 0));
+                () -> itemService.getItemsBooking(1L, 15, 0));
         Assertions.assertEquals("Page size must not be less than one", e0.getMessage());
 
         Exception e1 = Assertions.assertThrows(ValidationException.class,
-                ()-> itemService.getItemsBooking(1L, -10, 2));
+                () -> itemService.getItemsBooking(1L, -10, 2));
         Assertions.assertEquals("Index 'from' must not be less than zero", e1.getMessage());
 
         Mockito.when(userRepository.findById(anyLong()))
@@ -193,10 +195,10 @@ public class ItemServiceImplTest {
 
         Assertions.assertEquals(itemResponseDto, itemService.addNewItem(itemCreateRequestDto, 1L));
 
-        Mockito.when(userRepository.findById(3L))
-                .thenReturn(Optional.empty());
+        Mockito.when(userRepository.findById(3L)).
+                thenReturn(Optional.empty());
         Exception e = Assertions.assertThrows(NotFoundException.class,
-                ()-> itemService.addNewItem(itemCreateRequestDto, 3L));
+                () -> itemService.addNewItem(itemCreateRequestDto, 3L));
         Assertions.assertEquals("User is not found", e.getMessage());
     }
 
@@ -216,19 +218,17 @@ public class ItemServiceImplTest {
 
         Assertions.assertEquals(itemResponseDto, itemService.updateItem(1L, itemResponseDto, 1L));
 
-        Mockito.when(userRepository.findById(3L))
-                .thenReturn(Optional.empty());
+        Mockito.when(userRepository.findById(3L)).thenReturn(Optional.empty());
         Exception e0 = Assertions.assertThrows(NotFoundException.class,
-                ()-> itemService.updateItem(1L, itemResponseDto, 3L));
+                () -> itemService.updateItem(1L, itemResponseDto, 3L));
         Assertions.assertEquals("User is not found", e0.getMessage());
 
         Mockito.when(userRepository.findById(2L))
                 .thenReturn(Optional.of(user2));
         Item item2 = new Item(2L,"hammer","hammer",true, user2, null);
-        Mockito.when(itemRepository.findById(anyLong()))
-                .thenReturn(Optional.of(item2));
+        Mockito.when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item2));
         Exception e1 = Assertions.assertThrows(NotFoundException.class,
-                ()-> itemService.updateItem(1L, itemResponseDto, 2L));
+                () -> itemService.updateItem(1L, itemResponseDto, 2L));
         Assertions.assertEquals("user is not owner", e1.getMessage());
     }
 
