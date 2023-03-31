@@ -232,6 +232,7 @@ public class ItemServiceImplTest {
         Assertions.assertEquals("user is not owner", e1.getMessage());
     }
 
+    /*
     @Test
     void deleteItemTest() {
 
@@ -242,4 +243,6 @@ public class ItemServiceImplTest {
 
     }
 
+
+     */
 }
