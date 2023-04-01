@@ -168,6 +168,6 @@ public class ItemRequestServiceImplTest {
                 .thenReturn(itemForItemRequestDto);
         Mockito.when(itemRequestMapper.toItemRequestForResponseDto(itemRequest))
                 .thenReturn(itemRequestForResponseDto);
-        Assertions.assertEquals(itemRequestForResponseDto, itemRequestService.getItemRequest( 2L, 1L));
+        Assertions.assertEquals(itemRequestForResponseDto, itemRequestService.getItemRequest(2L, 1L));
     }
 }
