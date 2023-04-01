@@ -129,28 +129,22 @@ public class BookingServiceImpl implements BookingService {
 
         switch (stateBooking) {
             case ALL:
-                result = bookingRepository.
-                        findAllByBookerOrderByStartDesc(booker, page);
+                result = bookingRepository.findAllByBookerOrderByStartDesc(booker, page);
                 break;
             case CURRENT:
-                result = bookingRepository.
-                        findAllByBookerAndStartBeforeAndEndAfterOrderByStartDesc(booker, currentMoment , currentMoment, page);
+                result = bookingRepository.findAllByBookerAndStartBeforeAndEndAfterOrderByStartDesc(booker, currentMoment, currentMoment, page);
                 break;
             case PAST:
-                result = bookingRepository.
-                        findAllByBookerAndEndBeforeOrderByStartDesc(booker, currentMoment, page);
+                result = bookingRepository.findAllByBookerAndEndBeforeOrderByStartDesc(booker, currentMoment, page);
                 break;
             case FUTURE:
-                result = bookingRepository.
-                        findAllByBookerAndStartAfterOrderByStartDesc(booker, currentMoment, page);
+                result = bookingRepository.findAllByBookerAndStartAfterOrderByStartDesc(booker, currentMoment, page);
                 break;
             case WAITING:
-                result = bookingRepository.
-                        findAllByBookerAndStatusOrderByStartDesc(booker, BookingStatus.WAITING, page);
+                result = bookingRepository.findAllByBookerAndStatusOrderByStartDesc(booker, BookingStatus.WAITING, page);
                 break;
             case REJECTED:
-                result = bookingRepository.
-                        findAllByBookerAndStatusOrderByStartDesc(booker, BookingStatus.REJECTED, page);
+                result = bookingRepository.findAllByBookerAndStatusOrderByStartDesc(booker, BookingStatus.REJECTED, page);
                 break;
             case UNKNOWN:
                 throw new ValidationException("Unknown state: " + state);
@@ -180,28 +174,22 @@ public class BookingServiceImpl implements BookingService {
 
         switch (stateBooking) {
             case ALL:
-                result = bookingRepository.
-                        findAllByItemOwnerOrderByStartDesc(owner, page);
+                result = bookingRepository.findAllByItemOwnerOrderByStartDesc(owner, page);
                 break;
             case CURRENT:
-                result = bookingRepository.
-                        findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(owner, currentMoment, currentMoment, page);
+                result = bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(owner, currentMoment, currentMoment, page);
                 break;
             case PAST:
-                result = bookingRepository.
-                        findAllByItemOwnerAndEndBeforeOrderByStartDesc(owner, currentMoment, page);
+                result = bookingRepository.findAllByItemOwnerAndEndBeforeOrderByStartDesc(owner, currentMoment, page);
                 break;
             case FUTURE:
-                result = bookingRepository.
-                        findAllByItemOwnerAndStartAfterOrderByStartDesc(owner, currentMoment, page);
+                result = bookingRepository.findAllByItemOwnerAndStartAfterOrderByStartDesc(owner, currentMoment, page);
                 break;
             case WAITING:
-                result = bookingRepository.
-                        findAllByItemOwnerAndStatusOrderByStartDesc(owner,BookingStatus.WAITING, page);
+                result = bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(owner,BookingStatus.WAITING, page);
                 break;
             case REJECTED:
-                result = bookingRepository.
-                        findAllByItemOwnerAndStatusOrderByStartDesc(owner, BookingStatus.REJECTED, page);
+                result = bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(owner, BookingStatus.REJECTED, page);
                 break;
             case UNKNOWN:
                 throw new ValidationException("Unknown state: " + state);
