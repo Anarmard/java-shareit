@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @AllArgsConstructor // конструктор на все параметры
 public class BookingCreateRequestDto {
 

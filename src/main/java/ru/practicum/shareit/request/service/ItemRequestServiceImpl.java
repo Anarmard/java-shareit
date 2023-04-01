@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemForItemRequestDto;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -27,6 +28,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRequestRepository itemRequestRepository;
     private final ItemRequestMapper itemRequestMapper;
     private final ItemRepository itemRepository;
+    private final ItemMapper itemMapper;
     private final UserRepository userRepository;
 
     // добавить новый запрос вещи
@@ -60,13 +62,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     // получить список ВCЕХ запросов, созданных другими пользователями
     @Override
     public List<ItemRequestForResponseDto> getAllItemRequests(Long userId, Integer from, Integer size) {
-        if (size < 1) {
-            throw new ValidationException("Page size must not be less than one");
-        }
-
-        if (from < 0) {
-            throw new ValidationException("Index 'from' must not be less than zero");
-        }
+        if (size < 1) throw new ValidationException("Page size must not be less than one");
+        if (from < 0) throw new ValidationException("Index 'from' must not be less than zero");
 
         // сначала создаём описание сортировки по полю created
         Sort sortByCreatedDate = Sort.by(Sort.Direction.DESC, "created");
@@ -89,14 +86,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         for (Item item : itemListWithRequest) {
             if (item.getRequest() != null) {
                 ItemForItemRequestDto itemForItemRequestDto =
-                        new ItemForItemRequestDto(
-                                item.getId(),
-                                item.getName(),
-                                item.getDescription(),
-                                item.getAvailable(),
-                                item.getOwner().getId(),
-                                item.getRequest().getId()
-                        );
+                        itemMapper.toItemForItemRequestDto(item);
                 if (itemRequestMap.containsKey(item.getRequest().getId())) {
                     // такой request.id уже есть, значит добавляем itemForItemRequestDto к существующему списку
                     itemRequestMap.get(item.getRequest().getId()).add(itemForItemRequestDto);
@@ -148,14 +138,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             if (item.getRequest() != null) {
                 if (Objects.equals(item.getRequest().getId(), requestId)) {
                     ItemForItemRequestDto itemForItemRequestDto =
-                            new ItemForItemRequestDto(
-                                    item.getId(),
-                                    item.getName(),
-                                    item.getDescription(),
-                                    item.getAvailable(),
-                                    item.getOwner().getId(),
-                                    item.getRequest().getId()
-                            );
+                            itemMapper.toItemForItemRequestDto(item);
                     if (itemRequestForResponseDto.getItems() == null) {
                         List<ItemForItemRequestDto> itemsList = new ArrayList<>();
                         itemsList.add(itemForItemRequestDto);
@@ -166,7 +149,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 }
             }
         }
-
         return itemRequestForResponseDto;
     }
 }

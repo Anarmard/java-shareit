@@ -37,12 +37,12 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponseDto saveBooking(BookingCreateRequestDto bookingCreateRequestDto, Long userId) {
         // start > end
         if (bookingCreateRequestDto.getStart().isAfter(bookingCreateRequestDto.getEnd())) {
-            throw new ValidationException("approveBooking: start date is after end date");
+            throw new ValidationException("saveBooking: start date is after end date");
         }
 
         // start = end
         if (bookingCreateRequestDto.getStart().isEqual(bookingCreateRequestDto.getEnd())) {
-            throw new ValidationException("approveBooking: start date equal end date");
+            throw new ValidationException("saveBooking: start date equal end date");
         }
 
         // проверка есть ли User с таким id
@@ -112,26 +112,16 @@ public class BookingServiceImpl implements BookingService {
     // Получение списка всех бронирований текущего пользователя
     @Override
     public List<BookingResponseDto> getAllBooking(Long userId, String state, Integer from, Integer size) {
-        if (size < 1) {
-            throw new ValidationException("Page size must not be less than one");
-        }
-
-        if (from < 0) {
-            throw new ValidationException("Index 'from' must not be less than zero");
-        }
+        if (size < 1) throw new ValidationException("Page size must not be less than one");
+        if (from < 0) throw new ValidationException("Index 'from' must not be less than zero");
 
         // сначала создаём описание сортировки по полю start
         Sort sortById = Sort.by(Sort.Direction.DESC, "start");
         // затем создаём описание "страницы" размером size элемента
         Pageable page = PageRequest.of(from / size, size, sortById);
-
-        // проверка есть ли User с таким id
-        userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("getAllBooking: User is not found"));
-
         Page<Booking> result;
         User booker = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("getAllBooking: Booking is not found"));
+                .orElseThrow(() -> new NotFoundException("getAllBooking: User is not found"));
         LocalDateTime currentMoment = LocalDateTime.now();
 
         // переводим из String в ENUM
@@ -142,13 +132,16 @@ public class BookingServiceImpl implements BookingService {
                 result = bookingRepository.findAllByBookerOrderByStartDesc(booker, page);
                 break;
             case CURRENT:
-                result = bookingRepository.findCurrentByBooker(booker, currentMoment, page);
+                result = bookingRepository.
+                        findAllByBookerAndStartBeforeAndEndAfterOrderByStartDesc(booker, currentMoment , currentMoment, page);
                 break;
             case PAST:
-                result = bookingRepository.findPastByBooker(booker, currentMoment, page);
+                result = bookingRepository.
+                        findAllByBookerAndEndBeforeOrderByStartDesc(booker, currentMoment, page);
                 break;
             case FUTURE:
-                result = bookingRepository.findFutureByBooker(booker, currentMoment, page);
+                result = bookingRepository.
+                        findAllByBookerAndStartAfterOrderByStartDesc(booker, currentMoment, page);
                 break;
             case WAITING:
                 result = bookingRepository.findAllByBookerAndStatusOrderByStartDesc(booker,BookingStatus.WAITING, page);
@@ -167,26 +160,16 @@ public class BookingServiceImpl implements BookingService {
     // Получение списка бронирований для всех вещей текущего пользователя
     @Override
     public List<BookingResponseDto> getAllItemsByOwner(Long userId, String state, Integer from, Integer size) {
-        if (size < 1) {
-            throw new ValidationException("Page size must not be less than one");
-        }
-
-        if (from < 0) {
-            throw new ValidationException("Index 'from' must not be less than zero");
-        }
+        if (size < 1) throw new ValidationException("Page size must not be less than one");
+        if (from < 0) throw new ValidationException("Index 'from' must not be less than zero");
 
         // сначала создаём описание сортировки по полю start
         Sort sortById = Sort.by(Sort.Direction.DESC, "start");
         // затем создаём описание "страницы" размером size элемента
         Pageable page = PageRequest.of(from / size, size, sortById);
-
-        // проверка есть ли User с таким id
-        userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("getAllItemsByOwner: User is not found"));
-
         Page<Booking> result;
         User owner = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("getAllItemsByOwner: User have not items"));
+                .orElseThrow(() -> new NotFoundException("getAllItemsByOwner: User is not found"));
         LocalDateTime currentMoment = LocalDateTime.now();
 
         // переводим из String в ENUM
@@ -194,22 +177,23 @@ public class BookingServiceImpl implements BookingService {
 
         switch (stateBooking) {
             case ALL:
-                result = bookingRepository.findAllByOwnerItems(owner, page);
+                result = bookingRepository.findAllByItemOwnerOrderByStartDesc(owner, page);
                 break;
             case CURRENT:
-                result = bookingRepository.findCurrentByOwnerItems(owner, currentMoment, page);
+                result = bookingRepository.
+                        findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(owner, currentMoment, currentMoment, page);
                 break;
             case PAST:
-                result = bookingRepository.findPastByOwnerItems(owner, currentMoment, page);
+                result = bookingRepository.findAllByItemOwnerAndEndBeforeOrderByStartDesc(owner, currentMoment, page);
                 break;
             case FUTURE:
-                result = bookingRepository.findFutureByOwnerItems(owner, currentMoment, page);
+                result = bookingRepository.findAllByItemOwnerAndStartAfterOrderByStartDesc(owner, currentMoment, page);
                 break;
             case WAITING:
-                result = bookingRepository.findAllByOwnerAndStatus(owner,BookingStatus.WAITING, page);
+                result = bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(owner,BookingStatus.WAITING, page);
                 break;
             case REJECTED:
-                result = bookingRepository.findAllByOwnerAndStatus(owner, BookingStatus.REJECTED, page);
+                result = bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(owner, BookingStatus.REJECTED, page);
                 break;
             case UNKNOWN:
                 throw new ValidationException("Unknown state: " + state);
@@ -223,11 +207,10 @@ public class BookingServiceImpl implements BookingService {
         if (!item.getAvailable()) {
             throw new ValidationException("validate: item is not available");
         }
-        LocalDateTime now = LocalDateTime.now();
-        if (booking.getStart().isBefore(now)) {
+        if (booking.getStart().isBefore(LocalDateTime.now())) {
             throw new ValidationException("validate: start date before now");
         }
-        if (booking.getEnd().isBefore(now)) {
+        if (booking.getEnd().isBefore(LocalDateTime.now())) {
             throw new ValidationException("validate: end date before now");
         }
         if (booking.getEnd().isBefore(booking.getStart())) {
