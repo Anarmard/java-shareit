@@ -22,12 +22,13 @@ public class ItemRequest {
     @Column(name = "id", nullable = false, updatable = false, unique = true)
     private Long id; // уникальный идентификатор запроса
 
-    @Column(name = "description", nullable = false)
+    @Column(nullable = false)
     private String description; // текст запроса, содержащий описание требуемой вещи
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requestor_id", nullable = false)
     private User requestor; // пользователь, создавший запрос
 
+    @Column(name = "created_date", nullable = false)
     private LocalDateTime created; // дата и время создания запроса
 }
