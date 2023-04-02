@@ -6,12 +6,11 @@ import ru.practicum.shareit.booking.dto.BookingCreateRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDateDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.user.mapper.UserMapper;
 
 import java.util.List;
 
 // добавили в pom зависимости с mapstruct (в 4-х местах) поэтому можем использовать данный функционал
-@Mapper(componentModel = "spring", uses = UserMapper.class)
+@Mapper(componentModel = "spring")
 public interface BookingMapper {
 
     BookingResponseDto toBookingDto(Booking booking);
