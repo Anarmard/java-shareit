@@ -6,7 +6,6 @@ import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserCreateRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
-import ru.practicum.shareit.user.dto.UserUpdateDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -38,12 +37,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto saveUser(UserCreateRequestDto userCreateRequestDto) {
         User user = userMapper.toUser(userCreateRequestDto);
-        return userMapper.toUserDto(repository.save(user));
+        repository.save(user);
+        return userMapper.toUserDto(user);
     }
 
     @Override
-    public UserResponseDto updateUser(Long userId, UserUpdateDto userUpdateDto) {
-        User user = userMapper.toUser(userUpdateDto, userId);
+    public UserResponseDto updateUser(Long userId, UserResponseDto userResponseDto) {
+        User user = userMapper.toUser(userResponseDto, userId);
 
         if (!checkIsEmailUnique(user)) {
             throw new AlreadyExistsException("Email is not unique.");

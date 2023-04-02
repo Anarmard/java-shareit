@@ -1,23 +1,25 @@
 package ru.practicum.shareit.item.dto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.user.dto.UserCreateRequestDto;
 
 @Getter
 @AllArgsConstructor // конструктор на все параметры
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemResponseDto {
 
-    private Long id;
+    Long id;
 
-    private String name;
+    String name;
 
-    private String description;
+    String description;
 
-    private Boolean available;
+    Boolean available;
 
-    private UserCreateRequestDto owner;
+    UserCreateRequestDto owner;
 
-    private ItemRequestDto request;
+    Long requestId;
 }

@@ -1,8 +1,10 @@
 package ru.practicum.shareit.item.dto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.booking.dto.BookingResponseDateDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.dto.UserCreateRequestDto;
@@ -12,23 +14,24 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor // конструктор на все параметры
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemBookingResponseDto {
 
-    private Long id;
+    Long id;
 
-    private String name;
+    String name;
 
-    private String description;
+    String description;
 
-    private Boolean available;
+    Boolean available;
 
-    private UserCreateRequestDto owner;
+    UserCreateRequestDto owner;
 
-    private ItemRequestDto request;
+    ItemRequestDto request;
 
-    private BookingResponseDateDto lastBooking;
+    BookingResponseDateDto lastBooking;
 
-    private BookingResponseDateDto nextBooking;
+    BookingResponseDateDto nextBooking;
 
-    private List<CommentResponseDto> comments;
+    List<CommentResponseDto> comments;
 }

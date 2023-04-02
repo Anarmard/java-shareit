@@ -1,29 +1,37 @@
 package ru.practicum.shareit.booking.dto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @AllArgsConstructor // конструктор на все параметры
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookingCreateRequestDto {
 
-    private Long id; // уникальный идентификатор бронирования
+    Long id; // уникальный идентификатор бронирования
 
     @FutureOrPresent
-    private LocalDateTime start; // дата и время начала бронирования
+    @NotNull
+    LocalDateTime start; // дата и время начала бронирования
 
     @Future
-    private LocalDateTime end; // дата и время конца бронирования
+    @NotNull
+    LocalDateTime end; // дата и время конца бронирования
 
-    private Long itemId; // ID вещь, которую пользователь бронирует
+    Long itemId; // ID вещь, которую пользователь бронирует
 
-    private UserResponseDto booker; // пользователь, который осуществляет бронирование
+    UserResponseDto booker; // пользователь, который осуществляет бронирование
 
-    private BookingStatus status; // статус бронирования
+    BookingStatus status; // статус бронирования
 }

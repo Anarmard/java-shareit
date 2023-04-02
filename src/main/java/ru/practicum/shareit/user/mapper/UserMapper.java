@@ -6,7 +6,6 @@ import org.mapstruct.Mapping;
 
 import ru.practicum.shareit.user.dto.UserCreateRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
-import ru.practicum.shareit.user.dto.UserUpdateDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -23,8 +22,5 @@ public interface UserMapper {
     User toUser(UserCreateRequestDto userDto);
 
     @Mapping(target = "id", source = "userId")
-    User toUser(UserUpdateDto userDto, Long userId);
-
-    @Mapping(target = "id", source = "userId")
-    User toUser(UserResponseDto userResponseDto, Long userId);
+    User toUser(UserResponseDto userDto, Long userId);
 }

@@ -17,8 +17,8 @@ public interface BookingService {
     BookingResponseDto getBooking(Long userId, Long bookingId);
 
     // Получение списка всех бронирований текущего пользователя
-    List<BookingResponseDto> getAllBooking(Long userId, String state);
+    List<BookingResponseDto> getAllBooking(Long userId, String state, Integer from, Integer size);
 
     // Получение списка бронирований для всех вещей текущего пользователя
-    List<BookingResponseDto> getAllItemsByOwner(Long userId, String state);
+    List<BookingResponseDto> getAllItemsByOwner(Long userId, String state, Integer from, Integer size);
 }

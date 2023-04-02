@@ -3,22 +3,24 @@ package ru.practicum.shareit.item.dto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
-
 @Getter
+@Setter
 @AllArgsConstructor // конструктор на все параметры
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CommentResponseDto {
+public class ItemForItemRequestDto {
 
     Long id;
 
-    String text;
+    String name;
 
-    ItemResponseDto item;
+    String description;
 
-    String authorName;
+    Boolean available;
 
-    LocalDateTime created;
+    Long userId;
+
+    Long requestId;
 }

@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.ErrorHandler;
 import ru.practicum.shareit.user.dto.UserCreateRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
-import ru.practicum.shareit.user.dto.UserUpdateDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
@@ -33,9 +32,9 @@ public class UserController extends ErrorHandler {
     }
 
     @PatchMapping("/{userId}")
-    public UserResponseDto updateUser(@RequestBody UserUpdateDto userUpdateDto,
+    public UserResponseDto updateUser(@RequestBody UserResponseDto userResponseDto,
                                       @PathVariable Long userId) {
-        return userService.updateUser(userId, userUpdateDto);
+        return userService.updateUser(userId, userResponseDto);
     }
 
     @DeleteMapping("/{userId}")

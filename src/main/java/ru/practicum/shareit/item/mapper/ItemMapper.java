@@ -4,32 +4,34 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.practicum.shareit.item.dto.ItemBookingResponseDto;
 import ru.practicum.shareit.item.dto.ItemCreateRequestDto;
+import ru.practicum.shareit.item.dto.ItemForItemRequestDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
-import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.mapper.UserMapper;
 
 import java.util.List;
 
 // добавили в pom зависимости с mapstruct (в 4-х местах) поэтому можем использовать данный функционал
-@Mapper(componentModel = "spring", uses = UserMapper.class)
-public interface ItemMapper {
 
+@Mapper(componentModel = "spring")
+public interface ItemMapper {
+    @Mapping(target = "requestId", source = "request.id")
     ItemResponseDto toItemDto(Item item);
     // mapstruct сам генерит необходимый код для преобразования Item в ItemDto
+
+    @Mapping(target = "userId", source = "owner.id")
+    @Mapping(target = "requestId", source = "request.id")
+    ItemForItemRequestDto toItemForItemRequestDto(Item item);
 
     List<ItemResponseDto> toListItemDto(List<Item> itemList);
 
     @Mapping(target = "owner.id", source = "userId")
+    @Mapping(target = "request", ignore = true)
     Item toItem(ItemCreateRequestDto itemCreateRequest, Long userId);
-
-    @Mapping(target = "owner.id", source = "userId")
-    Item toItem(ItemBookingResponseDto itemBookingResponseDto, Long userId);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "request", ignore = true)
     @Mapping(target = "owner.id", source = "userId")
-    Item toItem(ItemUpdateDto itemDto, Long userId);
+    Item toItem(ItemResponseDto itemDto, Long userId);
 
     ItemBookingResponseDto toItemBookingDto(Item item);
 }
