@@ -70,8 +70,10 @@ public class ItemServiceImplTest {
     private CommentResponseDto commentResponseDto;
     private CommentCreateRequestDto commentCreateRequestDto;
     private Comment comment;
-    private Booking booking;
-    private Booking booking1;
+    private Booking bookingLast1;
+    private Booking bookingLast2;
+    private Booking bookingNext1;
+    private Booking bookingNext2;
     private BookingResponseDateDto bookingResponseDateDto;
     private BookingResponseDateDto bookingResponseDateDto1;
 
@@ -107,9 +109,15 @@ public class ItemServiceImplTest {
                 LocalDateTime.of(2023, 3, 28, 2,0));
 
         // Booking
-        booking = new Booking(1L,
+        bookingLast1 = new Booking(1L,
                 LocalDateTime.of(2023, 2, 28, 2,0),
                 LocalDateTime.of(2023, 2, 28, 3,0),
+                item,
+                user2,
+                BookingStatus.APPROVED);
+        bookingLast2 = new Booking(2L,
+                LocalDateTime.of(2020, 2, 28, 2,0),
+                LocalDateTime.of(2020, 2, 28, 3,0),
                 item,
                 user2,
                 BookingStatus.APPROVED);
@@ -119,9 +127,15 @@ public class ItemServiceImplTest {
                 1L,
                 2L,
                 BookingStatus.APPROVED);
-        booking1 = new Booking(1L,
+        bookingNext1 = new Booking(3L,
                 LocalDateTime.of(2024, 5, 28, 2,0),
                 LocalDateTime.of(2024, 5, 28, 3,0),
+                item,
+                user2,
+                BookingStatus.APPROVED);
+        bookingNext2 = new Booking(4L,
+                LocalDateTime.of(2026, 5, 28, 2,0),
+                LocalDateTime.of(2026, 5, 28, 3,0),
                 item,
                 user2,
                 BookingStatus.APPROVED);
@@ -207,20 +221,20 @@ public class ItemServiceImplTest {
                 .thenReturn(new PageImpl<>(List.of(item)));
 
         Mockito.when(bookingRepository.findAllByItemOwnerAndStatusAndStartBeforeOrderByStartDesc(any(), any(), any()))
-                .thenReturn(List.of(booking));
-        booking.setItem(item);
+                .thenReturn(List.of(bookingLast1, bookingLast2));
+        bookingLast1.setItem(item);
         Mockito.when(bookingRepository.findAllByItemOwnerAndStatusAndStartAfterOrderByStartAsc(any(), any(), any()))
-                .thenReturn(List.of(booking1));
-        booking1.setItem(item);
+                .thenReturn(List.of(bookingNext1, bookingNext2));
+        bookingNext1.setItem(item);
         Mockito.when(commentRepository.findByAuthorId(anyLong()))
                 .thenReturn(List.of(comment));
         comment.setItem(item);
 
         Mockito.when(itemMapper.toItemBookingDto(any()))
                 .thenReturn(itemBookingResponseDto);
-        Mockito.when(bookingMapper.toBookingDateDto(booking))
+        Mockito.when(bookingMapper.toBookingDateDto(bookingLast1))
                 .thenReturn(bookingResponseDateDto);
-        Mockito.when(bookingMapper.toBookingDateDto(booking1))
+        Mockito.when(bookingMapper.toBookingDateDto(bookingNext1))
                 .thenReturn(bookingResponseDateDto1);
         Mockito.when(commentMapper.toListCommentDto(List.of(comment)))
                 .thenReturn(List.of(commentResponseDto));
@@ -354,7 +368,7 @@ public class ItemServiceImplTest {
 
         Mockito.when(bookingRepository
                         .findAllByBookerAndItemAndEndBeforeOrderByStartDesc(any(), any(), any()))
-                .thenReturn(List.of(booking));
+                .thenReturn(List.of(bookingLast1));
 
         comment.setCreated(LocalDateTime.of(2023, 3, 28, 2,0));
 

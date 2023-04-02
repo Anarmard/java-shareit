@@ -65,6 +65,11 @@ public class ItemMapperImplTest {
         Assertions.assertNull(itemMapper.toItemForItemRequestDto(null));
         ItemForItemRequestDto itemForItemRequestDtoNew = itemMapper.toItemForItemRequestDto(item);
         Assertions.assertEquals(itemForItemRequestDto.getId(), itemForItemRequestDtoNew.getId());
+        Assertions.assertEquals(itemForItemRequestDto.getName(), itemForItemRequestDtoNew.getName());
+        Assertions.assertEquals(itemForItemRequestDto.getDescription(), itemForItemRequestDtoNew.getDescription());
+        Assertions.assertEquals(itemForItemRequestDto.getAvailable(), itemForItemRequestDtoNew.getAvailable());
+        Assertions.assertEquals(itemForItemRequestDto.getUserId(), itemForItemRequestDtoNew.getUserId());
+        Assertions.assertEquals(itemForItemRequestDto.getRequestId(), itemForItemRequestDtoNew.getRequestId());
     }
 
     @Test

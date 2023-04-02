@@ -85,8 +85,7 @@ public class ItemServiceImpl implements ItemService {
         // 1. для начала выгрузим сразу все прошедшие бронирования (lastbooking), где user владелец
         List<Booking> lastListBooking = bookingRepository.findAllByItemOwnerAndStatusAndStartBeforeOrderByStartDesc(
                 userFromDB, BookingStatus.APPROVED, LocalDateTime.now());
-        // перекладываем в map, где ключ Item, сохраняем только lastbooking
-        final Map<Item, Booking> lastMapBooking = new HashMap<>();
+        final Map<Item, Booking> lastMapBooking = new HashMap<>(); // перекладываем в map, где ключ Item, сохраняем только lastbooking
         for (Booking b : lastListBooking) {
             if (lastMapBooking.containsKey(b.getItem())) {
                 if (b.getStart().isAfter(lastMapBooking.get(b.getItem()).getStart())) lastMapBooking.put(b.getItem(), b);
@@ -95,13 +94,14 @@ public class ItemServiceImpl implements ItemService {
         // 2. и выгрузим сразу все будущие бронирования (nextbooking), где user владелец
         List<Booking> nextListBooking = bookingRepository.findAllByItemOwnerAndStatusAndStartAfterOrderByStartAsc(
                 userFromDB, BookingStatus.APPROVED, LocalDateTime.now());
-        // перекладываем в map, где ключ Item, сохраняем только nextbooking
-        final Map<Item, Booking> nextMapBooking = new HashMap<>();
+        final Map<Item, Booking> nextMapBooking = new HashMap<>(); // перекладываем в map, где ключ Item, сохраняем только nextbooking
         for (Booking b : nextListBooking) {
             if (nextMapBooking.containsKey(b.getItem())) {
                 if (b.getStart().isBefore(nextMapBooking.get(b.getItem()).getStart()))
                     nextMapBooking.put(b.getItem(), b);
-            } else nextMapBooking.put(b.getItem(), b); // такого item в map еще нет, записываем без сравнений
+            } else {
+                nextMapBooking.put(b.getItem(), b); // такого item в map еще нет, записываем без сравнений
+            }
         }
 
         // 3. все комментарии к Item, где user владелец
