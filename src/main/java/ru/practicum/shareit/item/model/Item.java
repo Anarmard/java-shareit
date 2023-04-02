@@ -1,9 +1,7 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
@@ -15,28 +13,29 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "items")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false, unique = true)
-    private Long id; // уникальный идентификатор вещи
+    Long id; // уникальный идентификатор вещи
 
     @Column(name = "name", nullable = false)
-    private String name; // краткое название
+    String name; // краткое название
 
     @Column(name = "description", nullable = false)
-    private String description; // развёрнутое описание
+    String description; // развёрнутое описание
 
     @Column(name = "is_available", nullable = false)
-    private Boolean available; // статус о том, доступна или нет вещь для аренды
+    Boolean available; // статус о том, доступна или нет вещь для аренды
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
-    private User owner; // владелец вещи
+    User owner; // владелец вещи
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
-    private ItemRequest request; // если вещь была создана по запросу другого пользователя, то в этом
+    ItemRequest request; // если вещь была создана по запросу другого пользователя, то в этом
     // поле будет храниться ссылка на соответствующий запрос
 }

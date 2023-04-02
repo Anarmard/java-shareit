@@ -1,9 +1,7 @@
 package ru.practicum.shareit.user.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 
@@ -13,16 +11,17 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false, unique = true)
-    private Long id; // уникальный идентификатор пользователя
+    Long id; // уникальный идентификатор пользователя
 
     @Column(name = "name", nullable = false)
-    private String name; // имя или логин пользователя
+    String name; // имя или логин пользователя
 
     @Column(name = "email", nullable = false, unique = true)
-    private String email; // адрес электронной почты
+    String email; // адрес электронной почты
 }

@@ -14,13 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemRequestForResponseDto {
 
-    private Long id; // уникальный идентификатор запроса
+    Long id; // уникальный идентификатор запроса
 
-    private String description; // текст запроса, содержащий описание требуемой вещи
+    String description; // текст запроса, содержащий описание требуемой вещи
 
-    private UserResponseDto requestor; // пользователь, создавший запрос
+    UserResponseDto requestor; // пользователь, создавший запрос
 
-    private LocalDateTime created; // дата и время создания запроса
+    LocalDateTime created; // дата и время создания запроса
 
-    private List<ItemForItemRequestDto> items; // список ответов на данный запрос
+    List<ItemForItemRequestDto> items; // список ответов на данный запрос
 }

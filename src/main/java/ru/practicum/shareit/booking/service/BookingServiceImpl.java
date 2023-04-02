@@ -54,7 +54,8 @@ public class BookingServiceImpl implements BookingService {
 
         // перевод Item из DTO в модель + установка Item в текущий Booking
         currentBooking.setItem(itemRepository.findById(bookingCreateRequestDto.getItemId())
-                .orElseThrow(() -> new NotFoundException("saveBooking: Item with such ID is not found")));
+                .orElseThrow(() -> new NotFoundException(
+                        "saveBooking: Item with ID " + bookingCreateRequestDto.getItemId() + " is not found")));
 
         // check Booking & Item
         validate(currentBooking, currentBooking.getItem());

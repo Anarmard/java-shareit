@@ -80,7 +80,7 @@ public class ItemRequestServiceImplTest {
                 .thenReturn(Optional.empty());
         Exception e0 = Assertions.assertThrows(NotFoundException.class,
                 () -> itemRequestService.addNewItemRequest(itemRequestDto, 4L));
-        Assertions.assertEquals("User with such ID does not exist", e0.getMessage());
+        Assertions.assertEquals("User with ID " + 4 + " does not exist", e0.getMessage());
 
         Mockito.when(userRepository.findById(2L))
                 .thenReturn(Optional.of(user2));
@@ -103,7 +103,7 @@ public class ItemRequestServiceImplTest {
                 .thenReturn(Optional.empty());
         Exception e0 = Assertions.assertThrows(NotFoundException.class,
                 () -> itemRequestService.getItemRequestsByOwner(4L));
-        Assertions.assertEquals("User with such ID does not exist", e0.getMessage());
+        Assertions.assertEquals("User with ID " + 4 + " does not exist", e0.getMessage());
 
         Mockito.when(userRepository.findById(2L))
                 .thenReturn(Optional.of(user2));
@@ -149,7 +149,7 @@ public class ItemRequestServiceImplTest {
                 .thenReturn(Optional.empty());
         Exception e0 = Assertions.assertThrows(NotFoundException.class,
                 () -> itemRequestService.getItemRequest(4L, 1L));
-        Assertions.assertEquals("User with such ID does not exist", e0.getMessage());
+        Assertions.assertEquals("User with ID " + 4 + " does not exist", e0.getMessage());
 
         Mockito.when(userRepository.findById(2L))
                 .thenReturn(Optional.of(user2));

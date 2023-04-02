@@ -1,7 +1,9 @@
 package ru.practicum.shareit.request.dto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 
 import javax.validation.constraints.NotBlank;
@@ -9,13 +11,14 @@ import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemRequestDto {
-    private Long id; // уникальный идентификатор запроса
+    Long id; // уникальный идентификатор запроса
 
     @NotBlank
-    private String description; // текст запроса, содержащий описание требуемой вещи
+    String description; // текст запроса, содержащий описание требуемой вещи
 
-    private UserResponseDto requestor; // пользователь, создавший запрос
+    UserResponseDto requestor; // пользователь, создавший запрос
 
-    private LocalDateTime created; // дата и время создания запроса
+    LocalDateTime created; // дата и время создания запроса
 }

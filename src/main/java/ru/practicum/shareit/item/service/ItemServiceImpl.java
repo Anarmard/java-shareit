@@ -140,7 +140,8 @@ public class ItemServiceImpl implements ItemService {
         Item currentItem = itemMapper.toItem(itemCreateRequestDto, userId); // перевели из DTO в model Item
         if (itemCreateRequestDto.getRequestId() != null) {
             currentItem.setRequest(itemRequestRepository.findById(itemCreateRequestDto.getRequestId())
-                    .orElseThrow(() -> new NotFoundException("ItemRequest with such ID is not found")));
+                    .orElseThrow(() -> new NotFoundException(
+                            "ItemRequest with ID " + itemCreateRequestDto.getRequestId() + " is not found")));
         }
         return itemMapper.toItemDto(itemRepository.save(currentItem));
     }

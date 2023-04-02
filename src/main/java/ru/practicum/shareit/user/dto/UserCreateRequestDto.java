@@ -1,21 +1,24 @@
 package ru.practicum.shareit.user.dto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 @Getter
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreateRequestDto {
 
-    private Long id;
+    Long id;
 
     @NotNull
-    private String name;
+    String name;
 
     @Email
     @NotNull
-    private String email;
+    String email;
 }

@@ -1,8 +1,10 @@
 package ru.practicum.shareit.booking.dto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.booking.model.BookingStatus;
 
 import java.time.LocalDateTime;
@@ -13,11 +15,12 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor // конструктор на все параметры
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookingResponseDateDto {
-    private Long id; // уникальный идентификатор бронирования
-    private LocalDateTime start; // дата и время начала бронирования
-    private LocalDateTime end; // дата и время конца бронирования
-    private Long itemId; // ID вещь, которую пользователь бронирует
-    private Long bookerId; // ID пользователь, который осуществляет бронирование
-    private BookingStatus status; // статус бронирования
+    Long id; // уникальный идентификатор бронирования
+    LocalDateTime start; // дата и время начала бронирования
+    LocalDateTime end; // дата и время конца бронирования
+    Long itemId; // ID вещь, которую пользователь бронирует
+    Long bookerId; // ID пользователь, который осуществляет бронирование
+    BookingStatus status; // статус бронирования
 }

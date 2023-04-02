@@ -122,12 +122,13 @@ public class BookingServiceImplTest {
         Mockito.when(bookingMapper.toBooking(any(), any()))
                 .thenReturn(booking);
 
-        Mockito.when(itemRepository.findById(anyLong()))
+        Mockito.when(itemRepository.findById(any()))
                 .thenReturn(Optional.empty());
 
         Exception e4 = Assertions.assertThrows(NotFoundException.class,
                 () -> bookingService.saveBooking(bookingCreateRequestDto, 2L));
-        Assertions.assertEquals("saveBooking: Item with such ID is not found", e4.getMessage());
+        Assertions.assertEquals("saveBooking: Item with ID " + bookingCreateRequestDto.getItemId() + " is not found",
+                e4.getMessage());
 
         Mockito.when(itemRepository.findById(1L))
                 .thenReturn(Optional.of(item));

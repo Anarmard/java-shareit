@@ -35,7 +35,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequestForResponseDto addNewItemRequest(ItemRequestDto itemRequestDto, Long userId) {
         // проверили User по его ID
-        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with such ID does not exist"));
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with ID " + userId + " does not exist"));
 
         ItemRequest itemRequest = itemRequestMapper.toItemRequest(itemRequestDto, userId);
         itemRequest.setCreated(LocalDateTime.now());
@@ -47,7 +47,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestForResponseDto> getItemRequestsByOwner(Long userId) {
         // проверили User по его ID
-        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with such ID does not exist"));
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with ID " + userId + " does not exist"));
 
         // выгрузили из БД все ItemRequest, где владельцем является наш User из БД
         List<ItemRequest> itemRequestList =
@@ -124,7 +124,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequestForResponseDto getItemRequest(Long userId, Long requestId) {
         // проверили User по его ID
-        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with such ID does not exist"));
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with ID " + userId + " does not exist"));
 
         ItemRequest itemRequestFromDB = itemRequestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("ItemRequest is not found"));
