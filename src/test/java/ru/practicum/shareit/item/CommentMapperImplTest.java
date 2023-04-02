@@ -67,8 +67,8 @@ public class CommentMapperImplTest {
     @Test
     void toListCommentDtoTest() {
         Assertions.assertNull(commentMapper.toListCommentDto(null));
-        List<CommentResponseDto> CommentResponseDtoNewList = commentMapper.toListCommentDto(List.of(comment));
-        Assertions.assertEquals(commentResponseDto.getId(), CommentResponseDtoNewList.get(0).getId());
+        List<CommentResponseDto> commentResponseDtoNewList = commentMapper.toListCommentDto(List.of(comment));
+        Assertions.assertEquals(commentResponseDto.getId(), commentResponseDtoNewList.get(0).getId());
     }
 
     @Test
