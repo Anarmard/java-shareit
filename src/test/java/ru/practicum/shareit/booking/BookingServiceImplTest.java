@@ -255,7 +255,7 @@ public class BookingServiceImplTest {
 
         Mockito.when(bookingRepository.findAllByBookerOrderByStartDesc(any(), any()))
                 .thenReturn(new PageImpl<>(List.of(booking)));
-        Mockito.when(bookingRepository.findAllByBookerAndStartBeforeAndEndAfterOrderByStartDesc(any(), any(), any(), any()))
+        Mockito.when(bookingRepository.findAllByBookerAndStartBeforeAndEndAfterOrderByStartAsc(any(), any(), any(), any()))
                 .thenReturn(new PageImpl<>(List.of(booking)));
         Mockito.when(bookingRepository.findAllByBookerAndEndBeforeOrderByStartDesc(any(), any(), any()))
                 .thenReturn(new PageImpl<>(List.of(booking)));
