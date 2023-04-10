@@ -60,6 +60,19 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId> <!--для mapper, перевести из одного объекта в другой-->
+            <version>1.5.3.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId> <!--для mapper, перевести из одного объекта в другой-->
+            <version>1.5.3.Final</version>
+        </dependency>
+
     </dependencies>
 
     <build>
