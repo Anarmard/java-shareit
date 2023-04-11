@@ -20,7 +20,6 @@ import javax.validation.Valid;
 @Validated
 public class BookingController {
     private final BookingClient bookingClient;
-
     private static final String USERID = "X-Sharer-User-Id";
 
     // добавление нового запроса на бронирование
@@ -57,7 +56,7 @@ public class BookingController {
             @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
         BookingState state = BookingState.from(stateParam)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-        checkPageParams(from ,size);
+        checkPageParams(from, size);
         log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
         return bookingClient.getAll(userId, state, from, size);
     }
@@ -71,7 +70,7 @@ public class BookingController {
             @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
         BookingState state = BookingState.from(stateParam)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-        checkPageParams(from ,size);
+        checkPageParams(from, size);
         log.info("Get booking by owner with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
         return bookingClient.getAllByOwner(userId, state, from, size);
     }
