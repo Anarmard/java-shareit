@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareitgateway.client.BaseClient;
 import ru.practicum.shareitgateway.item.dto.CommentRequestDto;
-import ru.practicum.shareitgateway.item.dto.ItemRequestDto;
+import ru.practicum.shareitgateway.item.dto.ItemCreateDto;
 
 import java.util.Map;
 
@@ -28,13 +28,13 @@ public class ItemClient extends BaseClient {
     }
 
     // добавление новой вещи
-    public ResponseEntity<Object> add(Long userId, ItemRequestDto itemRequestDto) {
-        return post("", userId, itemRequestDto);
+    public ResponseEntity<Object> add(Long userId, ItemCreateDto itemCreateDto) {
+        return post("", userId, itemCreateDto);
     }
 
     // редактирование вещи
-    public ResponseEntity<Object> update(Long userId, Long itemId, ItemRequestDto itemRequestDto) {
-        return patch("/" + itemId, userId, itemRequestDto);
+    public ResponseEntity<Object> update(Long userId, Long itemId, ItemCreateDto itemCreateDto) {
+        return patch("/" + itemId, userId, itemCreateDto);
     }
 
     // Просмотр информации о конкретной вещи по её идентификатору

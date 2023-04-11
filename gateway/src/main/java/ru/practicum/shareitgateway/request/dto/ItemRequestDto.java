@@ -1,4 +1,4 @@
-package ru.practicum.shareitgateway.item.dto;
+package ru.practicum.shareitgateway.request.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor
@@ -15,13 +14,6 @@ import javax.validation.constraints.NotNull;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemRequestDto {
     @NotBlank
-    String name;
+    String description; // текст запроса, содержащий описание требуемой вещи
 
-    @NotBlank
-    String description;
-
-    @NotNull
-    Boolean available;
-
-    Long requestId;
 }

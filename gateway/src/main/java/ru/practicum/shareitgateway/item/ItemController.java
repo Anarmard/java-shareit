@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareitgateway.exception.ValidationException;
 import ru.practicum.shareitgateway.item.dto.CommentRequestDto;
-import ru.practicum.shareitgateway.item.dto.ItemRequestDto;
+import ru.practicum.shareitgateway.item.dto.ItemCreateDto;
 
 import javax.validation.Valid;
 
@@ -24,16 +24,16 @@ public class ItemController {
     // добавление новой вещи
     @PostMapping
     public ResponseEntity<Object> addItem(@RequestHeader(USERID) Long userId,
-                                      @Valid @RequestBody ItemRequestDto itemRequestDto) {
-        return itemClient.add(userId, itemRequestDto);
+                                      @Valid @RequestBody ItemCreateDto itemCreateDto) {
+        return itemClient.add(userId, itemCreateDto);
     }
 
     // редактирование вещи
     @PatchMapping("/{itemId}")
     public ResponseEntity<Object> updateItem(@RequestHeader(USERID) Long userId,
                                   @PathVariable Long itemId,
-                                  @Valid @RequestBody ItemRequestDto itemRequestDto) {
-        return itemClient.update(userId, itemId, itemRequestDto);
+                                  @Valid @RequestBody ItemCreateDto itemCreateDto) {
+        return itemClient.update(userId, itemId, itemCreateDto);
     }
 
     // Просмотр информации о конкретной вещи по её идентификатору
