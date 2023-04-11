@@ -12,8 +12,11 @@
 
     <artifactId>shareit-gateway</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-
     <name>ShareIt Gateway</name>
+
+    <properties>
+        <java.version>11</java.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -29,6 +32,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
         </dependency>
 
         <dependency>
