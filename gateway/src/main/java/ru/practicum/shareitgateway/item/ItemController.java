@@ -11,6 +11,7 @@ import ru.practicum.shareitgateway.item.dto.CommentRequestDto;
 import ru.practicum.shareitgateway.item.dto.ItemCreateDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 @Controller
 @RequestMapping(path = "/items")
@@ -32,8 +33,8 @@ public class ItemController {
     // редактирование вещи
     @PatchMapping("/{itemId}")
     public ResponseEntity<Object> updateItem(@RequestHeader(USERID) Long userId,
-                                  @PathVariable Long itemId,
-                                  @Valid @RequestBody ItemCreateDto itemCreateDto) {
+                                  @PathVariable @Min(value = 1, message = "id меньше 1") Long itemId,
+                                  @RequestBody ItemCreateDto itemCreateDto) {
         log.info("update itemId={} by item {}, userId={}", itemId, itemCreateDto, userId);
         return itemClient.update(userId, itemId, itemCreateDto);
     }
@@ -41,7 +42,7 @@ public class ItemController {
     // Просмотр информации о конкретной вещи по её идентификатору
     @GetMapping("/{itemId}")
     public ResponseEntity<Object> getItem(@RequestHeader(USERID) Long userId,
-                                      @PathVariable Long itemId) {
+                                      @PathVariable @Min(value = 1, message = "id меньше 1") Long itemId) {
         log.info("get itemId={}, userId={}", itemId, userId);
         return itemClient.getById(userId, itemId);
     }
@@ -70,7 +71,7 @@ public class ItemController {
 
     @DeleteMapping("/{itemId}")
     public void deleteItem(@RequestHeader(USERID) long userId,
-                           @PathVariable Long itemId) {
+                           @PathVariable @Min(value = 1, message = "id меньше 1") Long itemId) {
         log.info("delete itemId={}, userId={}", itemId, userId);
         itemClient.deleteItem(userId, itemId);
     }
@@ -79,7 +80,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<Object> addComment(@RequestHeader(USERID) Long userId,
                                          @Valid @RequestBody CommentRequestDto commentRequestDto,
-                                         @PathVariable Long itemId) {
+                                         @PathVariable @Min(value = 1, message = "id меньше 1") Long itemId) {
         if (commentRequestDto.getText().isEmpty()) {
             throw new ValidationException("comment is empty");
         }

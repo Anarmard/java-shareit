@@ -15,5 +15,4 @@ import javax.validation.constraints.NotBlank;
 public class ItemRequestDto {
     @NotBlank
     String description; // текст запроса, содержащий описание требуемой вещи
-
 }
