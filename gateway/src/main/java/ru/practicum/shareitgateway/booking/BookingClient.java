@@ -37,7 +37,7 @@ public class BookingClient extends BaseClient {
         Map<String, Object> parameters = Map.of(
                 "approved", approved
         );
-        return post("/" + bookingId + "?approved={approved}", userId, parameters, null);
+        return patch("/" + bookingId + "?approved={approved}", userId, parameters, null);
     }
 
     // Просмотр информации о конкретном бронировании по её идентификатору
