@@ -16,22 +16,13 @@ import java.util.List;
 @AllArgsConstructor // конструктор на все параметры
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemBookingResponseDto {
-
     Long id;
-
     String name;
-
     String description;
-
     Boolean available;
-
     UserCreateRequestDto owner;
-
     ItemRequestDto request;
-
     BookingResponseDateDto lastBooking;
-
     BookingResponseDateDto nextBooking;
-
     List<CommentResponseDto> comments;
 }

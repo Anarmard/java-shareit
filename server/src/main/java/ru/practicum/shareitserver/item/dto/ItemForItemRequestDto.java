@@ -11,16 +11,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor // конструктор на все параметры
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemForItemRequestDto {
-
     Long id;
-
     String name;
-
     String description;
-
     Boolean available;
-
     Long userId;
-
     Long requestId;
 }

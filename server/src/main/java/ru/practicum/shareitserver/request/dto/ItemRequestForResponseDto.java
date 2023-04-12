@@ -13,14 +13,9 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class ItemRequestForResponseDto {
-
     Long id; // уникальный идентификатор запроса
-
     String description; // текст запроса, содержащий описание требуемой вещи
-
     UserResponseDto requestor; // пользователь, создавший запрос
-
     LocalDateTime created; // дата и время создания запроса
-
     List<ItemForItemRequestDto> items; // список ответов на данный запрос
 }

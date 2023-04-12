@@ -11,14 +11,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor // конструктор на все параметры
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommentResponseDto {
-
     Long id;
-
     String text;
-
     ItemResponseDto item;
-
     String authorName;
-
     LocalDateTime created;
 }
