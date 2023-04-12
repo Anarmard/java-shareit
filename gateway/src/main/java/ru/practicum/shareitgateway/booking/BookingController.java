@@ -56,7 +56,7 @@ public class BookingController {
             @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
             @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
         BookingState state = BookingState.from(stateParam)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
+                .orElseThrow(() -> new ValidationException("Unknown state: " + stateParam));
         checkPageParams(from, size);
         log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
         return bookingClient.getAll(userId, state, from, size);
@@ -66,11 +66,11 @@ public class BookingController {
     @GetMapping("/owner")
     public ResponseEntity<Object> getAllItemsByOwner(
             @RequestHeader(USERID) Long userId,
-            @RequestParam(value = "state", defaultValue = "ALL") String stateParam,
+            @RequestParam(value = "state", required = false, defaultValue = "ALL") String stateParam,
             @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
             @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
         BookingState state = BookingState.from(stateParam)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
+                .orElseThrow(() -> new ValidationException("Unknown state: " + stateParam));
         checkPageParams(from, size);
         log.info("Get booking by owner with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
         return bookingClient.getAllByOwner(userId, state, from, size);
