@@ -6,7 +6,6 @@ import ru.practicum.shareitserver.exception.ValidationException;
 import ru.practicum.shareitserver.item.dto.*;
 import ru.practicum.shareitserver.item.service.ItemService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,7 +18,7 @@ public class ItemController {
     // добавление новой вещи
     @PostMapping
     public ItemResponseDto add(@RequestHeader(USERID) Long userId,
-                               @Valid @RequestBody ItemCreateRequestDto itemCreateRequestDto) {
+                               @RequestBody ItemCreateRequestDto itemCreateRequestDto) {
         return itemService.addNewItem(itemCreateRequestDto, userId);
     }
 
@@ -27,7 +26,7 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     public ItemResponseDto update(@RequestHeader(USERID) Long userId,
                                   @PathVariable Long itemId,
-                                  @Valid @RequestBody ItemResponseDto itemResponseDto) {
+                                  @RequestBody ItemResponseDto itemResponseDto) {
         return itemService.updateItem(itemId, itemResponseDto, userId);
     }
 
@@ -65,7 +64,7 @@ public class ItemController {
     // Добавление отзывов
     @PostMapping("/{itemId}/comment")
     public CommentResponseDto addComment(@RequestHeader(USERID) Long userId,
-                                         @Valid @RequestBody CommentCreateRequestDto commentCreateRequestDto,
+                                         @RequestBody CommentCreateRequestDto commentCreateRequestDto,
                                          @PathVariable Long itemId) {
         if (commentCreateRequestDto.getText().isEmpty()) {
             throw new ValidationException("comment is empty");

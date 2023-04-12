@@ -25,6 +25,7 @@ public class ItemController {
     @PostMapping
     public ResponseEntity<Object> addItem(@RequestHeader(USERID) Long userId,
                                       @Valid @RequestBody ItemCreateDto itemCreateDto) {
+        log.info("add item {}, userId={}", itemCreateDto, userId);
         return itemClient.add(userId, itemCreateDto);
     }
 
@@ -33,6 +34,7 @@ public class ItemController {
     public ResponseEntity<Object> updateItem(@RequestHeader(USERID) Long userId,
                                   @PathVariable Long itemId,
                                   @Valid @RequestBody ItemCreateDto itemCreateDto) {
+        log.info("update itemId={} by item {}, userId={}", itemId, itemCreateDto, userId);
         return itemClient.update(userId, itemId, itemCreateDto);
     }
 
@@ -40,6 +42,7 @@ public class ItemController {
     @GetMapping("/{itemId}")
     public ResponseEntity<Object> getItem(@RequestHeader(USERID) Long userId,
                                       @PathVariable Long itemId) {
+        log.info("get itemId={}, userId={}", itemId, userId);
         return itemClient.getById(userId, itemId);
     }
 
@@ -50,6 +53,7 @@ public class ItemController {
             @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
             @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
         checkPageParams(from, size);
+        log.info("get all items by userId={}", userId);
         return itemClient.getItemsBooking(userId, from, size);
     }
 
@@ -60,12 +64,14 @@ public class ItemController {
             @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
             @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
         checkPageParams(from, size);
+        log.info("get all items with text: {}", text);
         return itemClient.getItemsBySearch(text, from, size);
     }
 
     @DeleteMapping("/{itemId}")
     public void deleteItem(@RequestHeader(USERID) long userId,
                            @PathVariable Long itemId) {
+        log.info("delete itemId={}, userId={}", itemId, userId);
         itemClient.deleteItem(userId, itemId);
     }
 
@@ -77,6 +83,7 @@ public class ItemController {
         if (commentRequestDto.getText().isEmpty()) {
             throw new ValidationException("comment is empty");
         }
+        log.info("add comment {} to itemId={}, userId={}", commentRequestDto, itemId, userId);
         return itemClient.addComment(userId, commentRequestDto, itemId);
     }
 

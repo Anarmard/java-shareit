@@ -24,12 +24,14 @@ public class ItemRequestController {
     @PostMapping
     public ResponseEntity<Object> addNewItemRequest(@RequestHeader(USERID) Long userId,
                                       @Valid @RequestBody ItemRequestDto itemRequestDto) {
+        log.info("add new item request {}, userId={}", itemRequestDto, userId);
         return itemRequestClient.add(userId, itemRequestDto);
     }
 
     // получить список СВОИХ запросов вместе с данными об ответах на них
     @GetMapping
     public ResponseEntity<Object> getItemRequestsByOwner(@RequestHeader(USERID) Long userId) {
+        log.info("get all item requests by owner, userId={}", userId);
         return itemRequestClient.getAllByOwner(userId);
     }
 
@@ -40,6 +42,7 @@ public class ItemRequestController {
             @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
             @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
         checkPageParams(from, size);
+        log.info("get all item requests by userId={}", userId);
         return itemRequestClient.getAll(userId, from, size);
     }
 
@@ -47,6 +50,7 @@ public class ItemRequestController {
     @GetMapping("/{requestId}")
     public ResponseEntity<Object> getItemRequest(@RequestHeader(USERID) Long userId,
                                                     @PathVariable Long requestId) {
+        log.info("get item requestId={}, userId={}", requestId, userId);
         return itemRequestClient.getById(userId, requestId);
     }
 

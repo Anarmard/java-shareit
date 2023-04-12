@@ -12,7 +12,6 @@
 
     <artifactId>shareit-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-
     <name>ShareIt Server</name>
 
     <dependencies>
@@ -76,7 +75,6 @@
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>

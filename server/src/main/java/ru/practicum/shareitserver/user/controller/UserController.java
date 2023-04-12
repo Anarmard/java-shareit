@@ -7,7 +7,6 @@ import ru.practicum.shareitserver.user.dto.UserCreateRequestDto;
 import ru.practicum.shareitserver.user.dto.UserResponseDto;
 import ru.practicum.shareitserver.user.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -27,7 +26,7 @@ public class UserController extends ErrorHandler {
     }
 
     @PostMapping
-    public UserResponseDto saveNewUser(@Valid @RequestBody UserCreateRequestDto userCreateRequestDto) {
+    public UserResponseDto saveNewUser(@RequestBody UserCreateRequestDto userCreateRequestDto) {
         return userService.saveUser(userCreateRequestDto);
     }
 

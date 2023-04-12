@@ -6,7 +6,6 @@ import ru.practicum.shareitserver.request.dto.ItemRequestDto;
 import ru.practicum.shareitserver.request.dto.ItemRequestForResponseDto;
 import ru.practicum.shareitserver.request.service.ItemRequestService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,7 +18,7 @@ public class ItemRequestController {
     // добавить новый запрос вещи
     @PostMapping
     public ItemRequestForResponseDto add(@RequestHeader(USERID) Long userId,
-                                         @Valid @RequestBody ItemRequestDto itemRequestDto) {
+                                         @RequestBody ItemRequestDto itemRequestDto) {
         return itemRequestService.addNewItemRequest(itemRequestDto, userId);
     }
 
