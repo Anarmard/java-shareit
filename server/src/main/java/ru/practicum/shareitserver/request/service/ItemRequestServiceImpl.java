@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareitserver.exception.NotFoundException;
-import ru.practicum.shareitserver.exception.ValidationException;
 import ru.practicum.shareitserver.item.dto.ItemForItemRequestDto;
 import ru.practicum.shareitserver.item.mapper.ItemMapper;
 import ru.practicum.shareitserver.item.model.Item;
@@ -62,9 +61,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     // получить список ВCЕХ запросов, созданных другими пользователями
     @Override
     public List<ItemRequestForResponseDto> getAllItemRequests(Long userId, Integer from, Integer size) {
-        if (size < 1) throw new ValidationException("Page size must not be less than one");
-        if (from < 0) throw new ValidationException("Index 'from' must not be less than zero");
-
         // сначала создаём описание сортировки по полю created
         Sort sortByCreatedDate = Sort.by(Sort.Direction.DESC, "created");
         // затем создаём описание "страницы" размером size элемента

@@ -74,8 +74,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemBookingResponseDto> getItemsBooking(Long userId, Integer from, Integer size) {
-        if (size < 1) throw new ValidationException("Page size must not be less than one");
-        if (from < 0) throw new ValidationException("Index 'from' must not be less than zero");
         Sort sortById = Sort.by(Sort.Direction.ASC, "id"); // сначала создаём описание сортировки по полю id
         Pageable page = PageRequest.of(from / size, size, sortById); // затем создаём описание "страницы" размером size элемента
         User userFromDB = userRepository.findById(userId)
@@ -164,8 +162,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemResponseDto> getItemsBySearch(String text, Integer from, Integer size) {
-        if (size < 1) throw new ValidationException("Page size must not be less than one");
-        if (from < 0) throw new ValidationException("Index 'from' must not be less than zero");
         if (text.isEmpty()) return new ArrayList<>();
         Sort sortById = Sort.by(Sort.Direction.ASC, "id"); // сначала создаём описание сортировки по полю id
         Pageable page = PageRequest.of(from / size, size, sortById); // затем создаём описание "страницы" размером size элемента
