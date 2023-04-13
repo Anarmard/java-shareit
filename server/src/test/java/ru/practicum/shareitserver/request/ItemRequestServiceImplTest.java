@@ -129,7 +129,6 @@ public class ItemRequestServiceImplTest {
         Exception e1 = Assertions.assertThrows(ValidationException.class,
                 () -> itemRequestService.getAllItemRequests(2L,  -10, 2));
         Assertions.assertEquals("Index 'from' must not be less than zero", e1.getMessage());
-
         Mockito.when(itemRequestRepository.findAllByRequestorIdNot(anyLong(), any()))
                 .thenReturn(new PageImpl<>(List.of(itemRequest)));
 

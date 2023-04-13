@@ -113,6 +113,9 @@ public class BookingServiceImpl implements BookingService {
     // Получение списка всех бронирований текущего пользователя
     @Override
     public List<BookingResponseDto> getAllBooking(Long userId, String state, Integer from, Integer size) {
+        if (size < 1) throw new ValidationException("Page size must not be less than one");
+        if (from < 0) throw new ValidationException("Index 'from' must not be less than zero");
+
         // сначала создаём описание сортировки по полю start
         Sort sortById = Sort.by(Sort.Direction.DESC, "start");
         // затем создаём описание "страницы" размером size элемента
@@ -155,6 +158,8 @@ public class BookingServiceImpl implements BookingService {
     // Получение списка бронирований для всех вещей текущего пользователя
     @Override
     public List<BookingResponseDto> getAllItemsByOwner(Long userId, String state, Integer from, Integer size) {
+        if (size < 1) throw new ValidationException("Page size must not be less than one");
+        if (from < 0) throw new ValidationException("Index 'from' must not be less than zero");
         // сначала создаём описание сортировки по полю start
         Sort sortById = Sort.by(Sort.Direction.DESC, "start");
         // затем создаём описание "страницы" размером size элемента
