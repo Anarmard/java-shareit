@@ -13,9 +13,9 @@
 
 ## Функциональность приложения
 Приложение соответствует принципам REST API.
-- Контроллеры (FilmController / UserController / GenreController / MpaController)
-- Сервисы (FilmService / UserService / GenreService / MpaService)
-- Хранилища (FilmStorage / UserStorage / GenreStorage / MpaStorage)
+- Контроллеры (BookingController / ItemController / RequestController / UserController)
+- Сервисы (BookingService / ItemService / RequestService / UserService)
+- Хранилища (BookingRepository / ItemRepository / RequestRepository / UserRepository)
 
 Приложение позволяет:
 - Сохранять, находить и редактировать фильмы или пользователей
@@ -24,7 +24,7 @@
 
 ## Схема БД и модели данных
 Модели:
-- **Film** (Фильм)
+- **Item** (Фильм)
 - **User** (Пользователь)
 - **Mpa** (Рейтинг)
 - **Genre** (Жанр)
